@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -ex 
-grype dir:${IMAGE} -q --file output.json
+grype ${IMAGE} -q --file output.json
 
 cat output.json
 
