@@ -1,0 +1,19 @@
+---
+jobs:
+
+- name: configure-pipeline
+  plan:
+  - in_parallel:
+    - get: pipeline-source
+      trigger: true
+      params: {depth: 1}
+  - set_pipeline: self
+    file: pipeline-source/ci/pipeline.yml
+
+resources:
+- name: pipeline-source
+  type: git
+  source:
+    uri: https://github.com/cloud-gov/container-scanning
+    branch: initial-deploy
+    paths: [ci/pipeline.yml]
