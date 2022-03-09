@@ -20,7 +20,7 @@ jobs:
   - task: scan
     file: pipeline-source/ci/scan-container.yml
     params:
-      IMAGE: 18fgsa/concourse-task
+      IMAGE: 18fgsa-concourse-task
 
 resources:
 - name: pipeline-source
