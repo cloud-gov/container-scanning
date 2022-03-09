@@ -15,7 +15,9 @@ jobs:
   - in_parallel: &resources
     - get: 18fgsa-concourse-task
       trigger: true
-  - task: jumpbox
+    - get: pipeline-source
+      trigger: true
+  - task: scan
     file: pipeline-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/concourse-task
@@ -26,7 +28,7 @@ resources:
   source:
     uri: https://github.com/cloud-gov/container-scanning
     branch: inital-deploy
-    paths: [ci/pipeline.yml]
+    paths: [ci/*]
 
 - name: 18fgsa-concourse-task
   type: docker-image
