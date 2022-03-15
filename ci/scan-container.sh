@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -ex 
-grype ${IMAGE} -q --file output.json
+grype ${IMAGE} >> output.json
 
 cat output.json
 
