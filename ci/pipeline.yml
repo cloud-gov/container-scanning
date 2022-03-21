@@ -13,6 +13,8 @@ jobs:
 - name: scan-18fgsa-concourse-task
   plan:
   - in_parallel: &resources
+    - get: weekly
+      trigger: true
     - get: 18fgsa-concourse-task
       trigger: true
     - get: pipeline-source
@@ -34,3 +36,8 @@ resources:
   type: docker-image
   source:
     repository: 18fgsa/concourse-task
+
+- name: weekly
+  type: time
+  source:
+    days: [Tuesday]
