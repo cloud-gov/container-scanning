@@ -16,6 +16,8 @@ jobs:
     - get: weekly
       trigger: true
     - get: 18fgsa-concourse-task
+      params:
+        save: true
       trigger: true
     - get: pipeline-source
       trigger: true
@@ -23,6 +25,8 @@ jobs:
     file: pipeline-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/concourse-task
+
+  
 
 resources:
 - name: pipeline-source
