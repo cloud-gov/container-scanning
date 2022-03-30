@@ -25,6 +25,9 @@ jobs:
     file: pipeline-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/concourse-task
+  - put: ecr-docker-reg
+    params:
+      load: 18fgsa-concourse-task
 
   
 
@@ -45,3 +48,10 @@ resources:
   type: time
   source:
     days: [Tuesday]
+
+- name: ecr-docker-reg
+  type: docker-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: ((aws-repo))
