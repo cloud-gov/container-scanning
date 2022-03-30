@@ -18,6 +18,7 @@ jobs:
     - get: 18fgsa-concourse-task
       params:
         save: true
+        rootfs: true
       trigger: true
     - get: pipeline-source
       trigger: true
@@ -27,7 +28,7 @@ jobs:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-docker-reg
     params:
-      load: 18fgsa-concourse-task
+      image: 18fgsa-concourse-task/rootfs.tar
 
   
 
@@ -50,7 +51,7 @@ resources:
     days: [Tuesday]
 
 - name: ecr-docker-reg
-  type: docker-image
+  type: registry-image
   source:
     aws_access_key_id: ((aws-key))
     aws_secret_access_key: ((aws-secret))
