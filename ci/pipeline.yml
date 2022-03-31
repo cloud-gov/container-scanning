@@ -27,7 +27,7 @@ jobs:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-docker-reg
     params:
-      image: 18fgsa-concourse-task/rootfs.tar
+      image: 18fgsa-concourse-task/image.tar
 
   
 
