@@ -16,11 +16,9 @@ jobs:
     - get: weekly
       trigger: true
     - get: 18fgsa-concourse-task
-      params:
-        tag: latest
       trigger: true
     - get: pipeline-source
-      trigger: true
+      trigger: false
   - task: scan
     file: pipeline-source/ci/scan-container.yml
     params:
@@ -43,6 +41,7 @@ resources:
   type: registry-image
   source:
     repository: 18fgsa/concourse-task
+    tag: latest
 
 - name: weekly
   type: time
