@@ -17,8 +17,7 @@ jobs:
       trigger: true
     - get: 18fgsa-concourse-task
       params:
-        save: true
-        rootfs: true
+        tag: latest
       trigger: true
     - get: pipeline-source
       trigger: true
