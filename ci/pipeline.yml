@@ -41,7 +41,7 @@ resources:
     paths: [ci/*]
 
 - name: 18fgsa-concourse-task
-  type: docker-image
+  type: registry-image
   source:
     repository: 18fgsa/concourse-task
 
