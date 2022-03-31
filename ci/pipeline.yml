@@ -16,6 +16,8 @@ jobs:
     - get: weekly
       trigger: true
     - get: 18fgsa-concourse-task
+      params:
+        format: oci
       trigger: true
     - get: pipeline-source
       trigger: false
