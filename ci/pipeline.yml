@@ -57,3 +57,4 @@ resources:
     aws_access_key_id: ((aws-key))
     aws_secret_access_key: ((aws-secret))
     repository: ((aws-repo))
+    aws_region: us-gov-west-1
