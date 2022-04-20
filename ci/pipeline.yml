@@ -43,7 +43,7 @@ jobs:
       TEMPLATE_SUBDIR: terraform/
       STACK_NAME: ecr
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
-      AWS_DEFAULT_REGION: ((aws-region))
+      AWS_DEFAULT_REGION: us-gov-west-1
       TF_VAR_remote_state_bucket: ((tf-state-bucket))
       TF_VAR_tooling_stack_name: tooling
   - put: slack
