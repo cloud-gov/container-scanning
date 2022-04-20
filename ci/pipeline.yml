@@ -92,6 +92,11 @@ resources:
     repository: 18fgsa/concourse-task
     tag: latest
 
+- name: slack
+  type: slack-notification
+  source:
+    url: ((slack-webhook-url))
+
 - name: weekly
   type: time
   source:
