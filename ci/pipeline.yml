@@ -19,15 +19,42 @@ jobs:
       params:
         format: oci
       trigger: true
-    - get: pipeline-source
+    - get: scan-source
       trigger: false
   - task: scan
-    file: pipeline-source/ci/scan-container.yml
+    file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/concourse-task
-  - put: ecr-docker-reg
+  - put: ecr-concourse-task
     params:
       image: 18fgsa-concourse-task/image.tar
+
+- name: terraform-plan-ecr
+  plan:
+  - in_parallel:
+    - get: terraform-templates
+      resource: terraform-config
+      trigger: true
+    - get: pipeline-tasks
+  - task: terraform-plan
+    file: terraform-templates/terraform/terraform-apply.yml
+    params: &tf-ecr
+      TERRAFORM_ACTION: plan
+      TEMPLATE_SUBDIR: terraform/
+      STACK_NAME: ecr
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      AWS_DEFAULT_REGION: ((aws-region))
+      TF_VAR_remote_state_bucket: ((tf-state-bucket))
+      TF_VAR_tooling_stack_name: tooling
+  - put: slack
+    params:
+      text_file: terraform-state/message.txt
+      text:  |
+        :terraform: $BUILD_JOB_NAME needs review
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: '#cg-platform'
+      username: ((username))
+      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
   
 
@@ -38,6 +65,26 @@ resources:
     uri: https://github.com/cloud-gov/container-scanning
     branch: inital-deploy
     paths: [ci/*]
+
+- name: scan-source
+  type: git
+  source:
+    uri: https://github.com/cloud-gov/container-scanning
+    branch: inital-deploy
+    paths: ["ci/scan-container.sh","ci/scan-container.yml"]
+
+- name: terraform-config
+  type: git
+  source:
+    uri: https://github.com/cloud-gov/container-scanning
+    branch: inital-deploy
+    paths: [terraform/*]
+
+- name: pipeline-tasks
+  type: git
+  source:
+    uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
+    branch: master
 
 - name: 18fgsa-concourse-task
   type: registry-image
@@ -50,11 +97,11 @@ resources:
   source:
     days: [Tuesday]
 
-- name: ecr-docker-reg
+- name: ecr-concourse-task
   type: registry-image
   source:
-    tag: latest
     aws_access_key_id: ((aws-key))
     aws_secret_access_key: ((aws-secret))
-    repository: ((aws-repo))
+    repository: concourse-task
     aws_region: us-gov-west-1
+
