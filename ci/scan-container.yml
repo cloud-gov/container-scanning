@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: 18fgsa-concourse-task
-- name: pipeline-source
+- name: scan-source
 
 run:
-  path: pipeline-source/ci/scan-container.sh
+  path: scan-source/ci/scan-container.sh
