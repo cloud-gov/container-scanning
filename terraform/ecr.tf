@@ -27,6 +27,6 @@ data "terraform_remote_state" "tooling" {
 resource "aws_ecr_repository" "repository" {
   count = length(var.repositories)
 
-  name                 = var.repository_name[count.index]
+  name                 = var.repositories[count.index]
   image_tag_mutability = "IMMUTABLE"
 }
