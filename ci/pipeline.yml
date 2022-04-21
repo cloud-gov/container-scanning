@@ -90,7 +90,6 @@ resources:
   type: registry-image
   source:
     repository: 18fgsa/concourse-task
-    tag: latest
 
 - name: slack
   type: slack-notification
