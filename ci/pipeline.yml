@@ -26,6 +26,8 @@ jobs:
     params:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-concourse-task
+    params:
+      load: 18fgsa-concourse-task/
 
 
 - name: terraform-plan-ecr
