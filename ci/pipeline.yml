@@ -57,6 +57,20 @@ jobs:
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
+- name: terraform-apply-ecr
+  plan:
+  - in_parallel:
+    - get: terraform-templates
+      resource: terraform-config
+      passed: [terraform-plan-ecr]
+      trigger: true
+    - get: pipeline-tasks
+  - task: terraform-apply
+    file: terraform-templates/terraform/terraform-apply.yml
+    params:
+      <<: *tf-ecr
+      TERRAFORM_ACTION: apply
+
   
 
 resources:
