@@ -17,7 +17,7 @@ jobs:
       trigger: true
     - get: 18fgsa-concourse-task
       params:
-        format: oci
+        save: true
       trigger: true
     - get: scan-source
       trigger: false
@@ -27,7 +27,7 @@ jobs:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-concourse-task
     params:
-      load: 18fgsa-concourse-task/
+      load: 18fgsa-concourse-task
 
 
 - name: terraform-plan-ecr
