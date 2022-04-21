@@ -26,8 +26,7 @@ jobs:
     params:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-concourse-task
-    params:
-      image: 18fgsa-concourse-task/image.tar
+
 
 - name: terraform-plan-ecr
   plan:
@@ -87,7 +86,7 @@ resources:
     branch: master
 
 - name: 18fgsa-concourse-task
-  type: registry-image
+  type: docker-image
   source:
     repository: 18fgsa/concourse-task
 
@@ -102,7 +101,7 @@ resources:
     days: [Tuesday]
 
 - name: ecr-concourse-task
-  type: registry-image
+  type: docker-image
   source:
     aws_access_key_id: ((aws-key))
     aws_secret_access_key: ((aws-secret))
