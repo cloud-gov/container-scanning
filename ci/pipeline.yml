@@ -28,7 +28,7 @@ jobs:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-concourse-task
     params:
-      image: 18fgsa-concourse-task/image.tar
+      image: 18fgsa-concourse-task/rootfs.tar
       additional_tags: 18fgsa-concourse-task/tag
 
 
