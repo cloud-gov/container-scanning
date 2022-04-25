@@ -125,6 +125,7 @@ resources:
     aws_secret_access_key: ((aws-secret))
     repository: concourse-task
     aws_region: us-gov-west-1
+    semver_constraint: ">= 1.0.0"
 
 resource_types:
 - name: slack-notification
