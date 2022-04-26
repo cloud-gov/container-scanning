@@ -28,6 +28,27 @@ jobs:
   - put: ecr-concourse-task
     params:
       image: 18fgsa-concourse-task/image.tar
+      additional_tags: 18fgsa-concourse-task/tag
+
+- name: scan-18fgsa-concourse-task-test
+  plan:
+  - in_parallel: &resources
+    - get: weekly
+      trigger: true
+    - get: ecr-concourse-task
+      params:
+        format: oci
+      trigger: true
+    - get: scan-source
+      trigger: false
+  - task: scan
+    file: scan-source/ci/scan-container.yml
+    params:
+      IMAGE: 18fgsa/concourse-task
+  - put: ecr-concourse-task
+    params:
+      image: 18fgsa-concourse-task/image.tar
+      additional_tags: 18fgsa-concourse-task/tag
 
 
 - name: terraform-plan-ecr
