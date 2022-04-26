@@ -7,7 +7,7 @@ image_resource:
     repository: 18fgsa/concourse-task
 
 inputs:
-- name: 18fgsa-concourse-task
+- name: gsa-concourse-task
 - name: scan-source
 
 run:
