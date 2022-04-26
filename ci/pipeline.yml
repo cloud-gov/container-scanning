@@ -107,6 +107,7 @@ resources:
   type: docker-image
   source:
     repository: 18fgsa/concourse-task
+    tag: 1.X
 
 - name: slack
   type: slack-notification
