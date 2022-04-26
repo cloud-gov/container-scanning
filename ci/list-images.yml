@@ -13,4 +13,4 @@ outputs:
   - name: image-list
 
 run:
-  path: scan-source/ci/list-images.sh
+  path: pipeline-source/ci/list-images.sh
