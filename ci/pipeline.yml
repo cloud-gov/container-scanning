@@ -44,10 +44,10 @@ jobs:
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
-      IMAGE: 18fgsa/concourse-task
+      IMAGE: ecr-concourse-task/concourse-task
   - put: ecr-concourse-task
     params:
-      image: 18fgsa-concourse-task/image.tar
+      image: ecr-concourse-task/image.tar
       additional_tags: 18fgsa-concourse-task/tag
 
 
