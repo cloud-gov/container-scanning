@@ -92,6 +92,16 @@ jobs:
       <<: *tf-ecr
       TERRAFORM_ACTION: apply
 
+- name: rescan-images-task
+  plan:
+  - get: pipeline-source
+  - task: list-images
+    file: pipeline-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: concourse-task
+
+
   
 
 resources:
