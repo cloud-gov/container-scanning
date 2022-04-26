@@ -15,7 +15,7 @@ jobs:
   - in_parallel: &resources
     - get: weekly
       trigger: true
-    - get: 18fgsa-concourse-task
+    - get: gsa-concourse-task
       params:
         format: oci
       trigger: true
@@ -27,8 +27,8 @@ jobs:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-concourse-task
     params:
-      image: 18fgsa-concourse-task/image.tar
-      additional_tags: 18fgsa-concourse-task/tag
+      image: gsa-concourse-task/image.tar
+      additional_tags: gsa-concourse-task/tag
 
 - name: scan-18fgsa-concourse-task-test
   plan:
@@ -122,7 +122,7 @@ resources:
     uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
     branch: master
 
-- name: 18fgsa-concourse-task
+- name: gsa-concourse-task
   type: registry-image
   source:
     repository: 18fgsa/concourse-task
