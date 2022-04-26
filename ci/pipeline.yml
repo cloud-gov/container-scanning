@@ -32,7 +32,7 @@ jobs:
 
 - name: scan-18fgsa-concourse-task-test
   plan:
-  - in_parallel: &resources
+  - in_parallel:
     - get: weekly
       trigger: true
     - get: ecr-concourse-task
