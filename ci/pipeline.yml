@@ -17,8 +17,7 @@ jobs:
       trigger: true
     - get: 18fgsa-concourse-task
       params:
-        save: true
-        rootfs: true
+        format: oci
       trigger: true
     - get: scan-source
       trigger: false
@@ -28,8 +27,7 @@ jobs:
       IMAGE: 18fgsa/concourse-task
   - put: ecr-concourse-task
     params:
-      image: 18fgsa-concourse-task/image
-      variant: ecr
+      image: 18fgsa-concourse-task/image.tar
       additional_tags: 18fgsa-concourse-task/tag
 
 
@@ -105,10 +103,10 @@ resources:
     branch: master
 
 - name: 18fgsa-concourse-task
-  type: docker-image
+  type: registry-image
   source:
     repository: 18fgsa/concourse-task
-    tag: 1.0.2
+    semver_constraint: ">= 1.0.0"
 
 - name: slack
   type: slack-notification
