@@ -106,9 +106,11 @@ jobs:
 - name: scan-image-job
   plan:
   - get: image-tags
+  - load_vars: tags
+    file: image-tags/tags.yml
   - across:
     - var: tag
-      values: ["1.0.3", "latest", "1.0.2"]
+      values: ((.:tags))
     task: task-((.:tag))
     config:
       platform: linux
@@ -178,7 +180,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags.txt
+    versioned_file: ecr/tags.yml
     region_name: us-gov-west-1
 
 resource_types:
