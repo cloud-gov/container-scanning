@@ -110,7 +110,7 @@ jobs:
     file: image-tags/tags.txt
   - across:
     - var: tag
-      values: ((.:tags))
+      values: ["1.0.3", "latest", "1.0.2"]
     task: task-((.:tag))
     config:
       platform: linux
