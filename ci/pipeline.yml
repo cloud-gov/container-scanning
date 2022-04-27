@@ -107,8 +107,7 @@ jobs:
   plan:
   - get: image-tags
   - load_var: tags
-    file: image-tags/tags.yml
-    format: yml
+    file: image-tags/tags.json
   - across:
     - var: tag
       values: ((.:tags))
