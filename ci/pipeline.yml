@@ -121,7 +121,7 @@ resources:
   source:
     uri: https://github.com/cloud-gov/container-scanning
     branch: inital-deploy
-    paths: ["ci/scan-container.sh","ci/scan-container.yml"]
+    paths: ["ci/scan-container.sh","ci/scan-container.yml","ci/scan-ecr-container.sh","ci/scan-ecr-container.yml"]
 
 - name: terraform-config
   type: git
