@@ -100,6 +100,8 @@ jobs:
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
       IMAGE_REPOSITORY: concourse-task
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
 
 
   
