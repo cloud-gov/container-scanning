@@ -106,7 +106,7 @@ jobs:
 - name: scan-image-job
   plan:
   - get: image-tags
-  - load_vars: tags
+  - load_var: tags
     file: image-tags/tags.yml
   - across:
     - var: tag
