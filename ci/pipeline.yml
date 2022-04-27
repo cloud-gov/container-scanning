@@ -177,7 +177,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: tags.txt
+    versioned_file: ecr/tags.txt
     region_name: us-gov-west-1
 
 resource_types:
