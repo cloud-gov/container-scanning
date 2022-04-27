@@ -71,7 +71,7 @@ jobs:
       <<: *tf-ecr
       TERRAFORM_ACTION: apply
 
-- name: rescan-images-task
+- name: list-images-task
   plan:
   - get: pipeline-source
   - task: list-images
