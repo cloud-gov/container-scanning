@@ -108,6 +108,7 @@ jobs:
   - get: image-tags
   - load_var: tags
     file: image-tags/tags.yml
+    format: yml
   - across:
     - var: tag
       values: ((.:tags))
