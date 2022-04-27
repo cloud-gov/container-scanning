@@ -114,6 +114,9 @@ jobs:
     task: task-((.:tag))
     config:
       platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: busy-box}
       run:
         path: echo
         args: ["((.:tag))"]
