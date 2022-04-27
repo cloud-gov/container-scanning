@@ -30,27 +30,6 @@ jobs:
       image: gsa-concourse-task/image.tar
       additional_tags: gsa-concourse-task/tag
 
-- name: scan-18fgsa-concourse-task-test
-  plan:
-  - in_parallel:
-    - get: weekly
-      trigger: true
-    - get: ecr-concourse-task
-      params:
-        format: oci
-      trigger: true
-    - get: scan-source
-      trigger: false
-  - task: scan
-    file: scan-source/ci/scan-container.yml
-    params:
-      IMAGE: ecr-concourse-task/concourse-task
-  - put: ecr-concourse-task
-    params:
-      image: ecr-concourse-task/image.tar
-      additional_tags: ecr-concourse-task/tag
-
-
 - name: terraform-plan-ecr
   plan:
   - in_parallel:
@@ -106,21 +85,19 @@ jobs:
 - name: scan-image-job
   plan:
   - get: image-tags
+  - get: weekly
+    trigger: true
+  - get: scan-source
+    trigger: false
   - load_var: tags
     file: image-tags/tags.json
   - across:
     - var: tag
       values: ((.:tags))
     task: task-((.:tag))
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source: {repository: 18fgsa/concourse-task}
-      run:
-        path: echo
-        args: ["((.:tag))"]
-
+    file: scan-source/ci/scan-container.yml
+    params:
+      IMAGE: "((concourse-task-repo)):((.:tag))"
   
 
 resources:
