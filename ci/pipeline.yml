@@ -103,6 +103,18 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
+- name: scan-image-job
+  plan:
+  - across:
+    - get: image-tags
+    - load_var: tags
+      file: image-tags/tags.txt
+    task: task-((.:tags))
+    config:
+      platform: linux
+      run:
+        path: echo
+        args: ["((.:tags))"]
 
   
 
@@ -159,9 +171,20 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
+- name: image-tags
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: tags.txt
+    region_name: us-gov-west-1
+
 resource_types:
 - name: slack-notification
   type: docker-image
   source:
     repository: cfcommunity/slack-notification-resource
 
+- name: s3-iam
+  type: docker-image
+  source:
+    repository: 18fgsa/s3-resource
