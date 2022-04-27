@@ -1,7 +1,5 @@
 #!/bin/bash
 
-aws ecr get-login-password --region us-gov-west-1
-
 grype ${IMAGE} -q -o json --file output.json
 grype ${IMAGE} -q -o table --file table.txt
 
