@@ -173,12 +173,12 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: image-tags
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags.txt
-    region_name: us-gov-west-1
+#- name: image-tags
+#  type: s3-iam
+#  source:
+#    bucket: ((tf-state-bucket))
+#    versioned_file: ecr/tags.txt
+#    region_name: us-gov-west-1
 
 resource_types:
 - name: slack-notification
