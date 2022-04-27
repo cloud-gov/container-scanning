@@ -102,6 +102,10 @@ jobs:
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: "((concourse-task-repo)):((.:tag))"
+  - task: scan
+    file: scan-source/ci/scan-container.yml
+    params:
+      IMAGE: s
   
 
 resources:
