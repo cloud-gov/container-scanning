@@ -89,6 +89,9 @@ jobs:
     trigger: true
   - get: scan-source
     trigger: false
+  - get: gsa-concourse-task
+    params:
+      format: oci
   - load_var: tags
     file: image-tags/tags.json
   - across:
