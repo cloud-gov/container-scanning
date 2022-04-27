@@ -106,15 +106,17 @@ jobs:
 - name: scan-image-job
   plan:
   - get: image-tags
+  - load_var: tags
+    file: image-tags/tags.txt
   - across:
-    - load_var: tags
-      file: image-tags/tags.txt
-    task: task-((.:tags))
+    - var: tag
+      values: ((.:tags))
+    task: task-((.:tag))
     config:
       platform: linux
       run:
         path: echo
-        args: ["((.:tags))"]
+        args: ["((.:tag))"]
 
   
 
