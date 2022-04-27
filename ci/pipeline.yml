@@ -106,8 +106,6 @@ jobs:
 - name: scan-image-job
   plan:
   - get: image-tags
-  - load_var: tags
-    file: image-tags/tags.txt
   - across:
     - var: tag
       values: ["1.0.3", "latest", "1.0.2"]
