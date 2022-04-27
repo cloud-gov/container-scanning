@@ -92,6 +92,7 @@ jobs:
   - get: gsa-concourse-task
     params:
       format: oci
+    resource: ecr-concourse-task
   - load_var: tags
     file: image-tags/tags.json
   - across:
