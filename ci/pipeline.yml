@@ -103,6 +103,7 @@ jobs:
     params:
       IMAGE: "((concourse-task-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
