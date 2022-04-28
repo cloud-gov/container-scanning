@@ -7,10 +7,10 @@ image_resource:
     repository: 18fgsa/concourse-task
 
 inputs:
-  - name: pipeline-source
+  - name: scan-source
 
 outputs:
   - name: image-list
 
 run:
-  path: pipeline-source/ci/list-images.sh
+  path: scan-source/ci/list-images.sh
