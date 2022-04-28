@@ -87,6 +87,7 @@ jobs:
 - name: scan-ecr-concourse-task
   plan:
   - get: image-tags
+    trigger: true
   - get: weekly
     trigger: true
     passed: [list-tags-concourse-task]
@@ -97,7 +98,7 @@ jobs:
       format: oci
     resource: ecr-concourse-task
   - load_var: tags
-    file: image-tags/tags.json
+    file: image-tags/tags-concourse-task.json
   - across:
     - var: tag
       values: ((.:tags))
