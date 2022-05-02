@@ -86,7 +86,7 @@ jobs:
 
 - name: scan-ecr-concourse-task
   plan:
-  - get: image-tags
+  - get: image-tags-concourse-task
     trigger: true
   - get: weekly
     trigger: true
@@ -98,7 +98,7 @@ jobs:
       format: oci
     resource: ecr-concourse-task
   - load_var: tags
-    file: image-tags/tags-concourse-task.json
+    file: image-tags-concourse-task/tags-concourse-task.json
   - across:
     - var: tag
       values: ((.:tags))
@@ -163,11 +163,11 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: image-tags
+- name: image-tags-concourse-task
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    regexp: ecr/tags-(.*).json
+    regexp: ecr/tags-concourse-task.json
     region_name: us-gov-west-1
 
 resource_types:
