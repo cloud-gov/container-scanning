@@ -74,6 +74,7 @@ jobs:
 - name: list-tags-concourse-task
   plan:
   - get: scan-source
+    passed: [scan-18fgsa-concourse-task]
   - get: weekly
     trigger: true
   - task: list-images
