@@ -12,6 +12,8 @@ CONFIG="\
     }\n
 }\n"
 
+mkdir ~/.docker
+
 printf "${CONFIG}" > ~/.docker/config.json
 
 #scan
