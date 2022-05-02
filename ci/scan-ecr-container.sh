@@ -7,6 +7,7 @@ CONFIG="\
 {\n
     \"auths\": {\n
         \"${REGISTRY}\": {\n
+            \"username\": \"AWS\",\n
             \"auth\": \"${PASSWD}\"\n
         }\n
     }\n
