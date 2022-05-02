@@ -103,6 +103,7 @@ jobs:
     passed: [list-tags-concourse-task]
   - get: scan-source
     trigger: false
+    passed: [list-tags-concourse-task]
   - get: gsa-concourse-task
     params:
       format: oci
