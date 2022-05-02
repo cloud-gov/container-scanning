@@ -84,6 +84,15 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
+- name: delete-tag-concourse-task
+  plan:
+  - get: scan-source
+  - task: delete-image
+    file: scan-source/ci/delete-image.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: concourse-task
+
 - name: scan-ecr-concourse-task
   plan:
   - get: image-tags-concourse-task
@@ -123,7 +132,14 @@ resources:
   source:
     uri: https://github.com/cloud-gov/container-scanning
     branch: inital-deploy
-    paths: ["ci/scan-container.sh","ci/scan-container.yml","ci/scan-ecr-container.sh","ci/scan-ecr-container.yml", "ci/list-images.sh", "ci/list-images.yml"]
+    paths: ["ci/scan-container.sh",
+            "ci/scan-container.yml",
+            "ci/scan-ecr-container.sh",
+            "ci/scan-ecr-container.yml",
+            "ci/list-images.sh",
+            "ci/list-images.yml",
+            "ci/delete-image.sh",
+            "ci/delete-image.yml"]
 
 - name: terraform-config
   type: git
