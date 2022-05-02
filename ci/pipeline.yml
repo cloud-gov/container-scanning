@@ -167,7 +167,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    regexp: ecr/tags-concourse-task.json
+    versioned_file: ecr/tags-concourse-task.json
     region_name: us-gov-west-1
 
 resource_types:
