@@ -319,12 +319,12 @@ resources:
 #     versioned_file: ecr/tags-s3-resource-simple.json
 #     region_name: us-gov-west-1
 
-- name: image-tags-oracle-client
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-oracle-client.json
-    region_name: us-gov-west-1
+# - name: image-tags-oracle-client
+#   type: s3-iam
+#   source:
+#     bucket: ((tf-state-bucket))
+#     versioned_file: ecr/tags-oracle-client.json
+#     region_name: us-gov-west-1
 
 # - name: image-tags-sql-clients
 #   type: s3-iam
