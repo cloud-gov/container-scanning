@@ -125,6 +125,7 @@ jobs:
       passed: [terraform-plan-ecr]
       trigger: true
     - get: pipeline-tasks
+      passed: [terraform-plan-ecr]
   - task: terraform-apply
     file: terraform-templates/terraform/terraform-apply.yml
     params:
