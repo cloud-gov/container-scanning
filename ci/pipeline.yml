@@ -47,7 +47,7 @@ jobs:
       IMAGE: 18fgsa/s3-resource-simple
   - put: ecr-s3-resource-simple
     params:
-      image: s3-resource-simple/image.tar
+      image: gsa-s3-resource-simple/image.tar
       additional_tags: gsa-s3-resource-simple/tag
 
 - name: terraform-plan-ecr
