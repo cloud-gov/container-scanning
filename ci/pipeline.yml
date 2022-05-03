@@ -125,6 +125,20 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
+- name: list-tags-oracle-client
+  plan:
+  - get: scan-source
+    passed: [scan-18fgsa-oracle-client]
+  - get: weekly
+    trigger: true
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: oracle-client
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
 - name: delete-tag-concourse-task
   plan:
   - get: scan-source
@@ -159,7 +173,32 @@ jobs:
       IMAGE: "((concourse-task-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
-  
+
+# - name: scan-ecr-oracle-client
+#   plan:
+#   - get: image-tags-oracle-client
+#     trigger: true
+#   - get: weekly
+#     trigger: true
+#     passed: [list-tags-oracle-client]
+#   - get: scan-source
+#     trigger: false
+#     passed: [list-tags-oracle-client]
+#   - get: gsa-oracle-client
+#     params:
+#       format: oci
+#     resource: ecr-oracle-client
+#   - load_var: tags
+#     file: image-tags-oracle-client/tags-oracle-client.json
+#   - across:
+#     - var: tag
+#       values: ((.:tags))
+#     task: task-((.:tag))
+#     file: scan-source/ci/scan-ecr-container.yml
+#     params:
+#       IMAGE: "((oracle-client-repo)):((.:tag))"
+#       AWS_DEFAULT_REGION: us-gov-west-1
+#       REGISTRY: ((aws-ecr-registry))
 
 resources:
 - name: pipeline-source
@@ -280,12 +319,12 @@ resources:
 #     versioned_file: ecr/tags-s3-resource-simple.json
 #     region_name: us-gov-west-1
 
-# - name: image-tags-oracle-client
-#   type: s3-iam
-#   source:
-#     bucket: ((tf-state-bucket))
-#     versioned_file: ecr/tags-oracle-client.json
-#     region_name: us-gov-west-1
+- name: image-tags-oracle-client
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-oracle-client.json
+    region_name: us-gov-west-1
 
 # - name: image-tags-sql-clients
 #   type: s3-iam
