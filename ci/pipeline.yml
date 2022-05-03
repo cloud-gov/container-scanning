@@ -50,6 +50,26 @@ jobs:
       image: gsa-s3-resource-simple/image.tar
       additional_tags: gsa-s3-resource-simple/tag
 
+- name: scan-18fgsa-oracle-client
+  plan:
+  - in_parallel: &resources
+    - get: weekly
+      trigger: true
+    - get: gsa-s3-oracle-client
+      params:
+        format: oci
+      trigger: true
+    - get: scan-source
+      trigger: false
+  - task: scan
+    file: scan-source/ci/scan-container.yml
+    params:
+      IMAGE: 18fgsa/oracle-client
+  - put: ecr-oracle-client
+    params:
+      image: gsa-oracle-client/image.tar
+      additional_tags: gsa-oracle-client/tag
+
 - name: terraform-plan-ecr
   plan:
   - in_parallel:
@@ -188,11 +208,11 @@ resources:
     repository: 18fgsa/s3-resource-simple
     semver_constraint: ">= 1.0.0"
 
-# - name: gsa-oracle-client
-#   type: registry-image
-#   source:
-#     repository: 18fgsa/oracle-client
-#     semver_constraint: ">= 1.0.0"
+- name: gsa-oracle-client
+  type: registry-image
+  source:
+    repository: 18fgsa/oracle-client
+    semver_constraint: ">= 1.0.0"
 
 # - name: gsa-sql-clients
 #   type: registry-image
@@ -228,14 +248,14 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-# - name: ecr-oracle-client
-#   type: registry-image
-#   source:
-#     aws_access_key_id: ((aws-key))
-#     aws_secret_access_key: ((aws-secret))
-#     repository: oracle-client
-#     aws_region: us-gov-west-1
-#     semver_constraint: ">= 1.0.0"
+- name: ecr-oracle-client
+  type: registry-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: oracle-client
+    aws_region: us-gov-west-1
+    semver_constraint: ">= 1.0.0"
 
 # - name: ecr-sql-clients
 #   type: registry-image
