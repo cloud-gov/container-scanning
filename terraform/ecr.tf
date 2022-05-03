@@ -6,7 +6,7 @@ variable "tooling_stack_name" {
 
 variable "repositories" {
   type = list(string)
-  default = ["concourse-task","s3-resource-simple","oracle-client"]
+  default = ["concourse-task","s3-resource-simple","oracle-client","sql-clients"]
 }
 
 terraform {

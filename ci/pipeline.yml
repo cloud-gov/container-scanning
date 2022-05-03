@@ -70,6 +70,26 @@ jobs:
       image: gsa-oracle-client/image.tar
       additional_tags: gsa-oracle-client/tag
 
+- name: scan-18fgsa-sql-clients
+  plan:
+  - in_parallel: &resources
+    - get: weekly
+      trigger: true
+    - get: gsa-sql-clients
+      params:
+        format: oci
+      trigger: true
+    - get: scan-source
+      trigger: false
+  - task: scan
+    file: scan-source/ci/scan-container.yml
+    params:
+      IMAGE: 18fgsa/sql-clients
+  - put: ecr-sql-clients
+    params:
+      image: gsa-sql-clients/image.tar
+      additional_tags: gsa-sql-clients/tag
+
 - name: terraform-plan-ecr
   plan:
   - in_parallel:
@@ -136,6 +156,20 @@ jobs:
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
       IMAGE_REPOSITORY: oracle-client
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
+- name: list-tags-sql-clients
+  plan:
+  - get: scan-source
+    passed: [scan-18fgsa-sql-clients]
+  - get: weekly
+    trigger: true
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: sql-clients
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
@@ -253,11 +287,11 @@ resources:
     repository: 18fgsa/oracle-client
     semver_constraint: ">= 1.0.0"
 
-# - name: gsa-sql-clients
-#   type: registry-image
-#   source:
-#     repository: 18fgsa/sql-clients
-#     semver_constraint: ">= 1.0.0"
+- name: gsa-sql-clients
+  type: registry-image
+  source:
+    repository: 18fgsa/sql-clients
+    semver_constraint: ">= 1.0.0"
 
 - name: slack
   type: slack-notification
@@ -296,14 +330,14 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-# - name: ecr-sql-clients
-#   type: registry-image
-#   source:
-#     aws_access_key_id: ((aws-key))
-#     aws_secret_access_key: ((aws-secret))
-#     repository: sql-clients
-#     aws_region: us-gov-west-1
-#     semver_constraint: ">= 1.0.0"
+- name: ecr-sql-clients
+  type: registry-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: sql-clients
+    aws_region: us-gov-west-1
+    semver_constraint: ">= 1.0.0"
 
 - name: image-tags-concourse-task
   type: s3-iam
