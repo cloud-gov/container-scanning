@@ -306,7 +306,7 @@ resources:
   type: registry-image
   source:
     repository: 18fgsa/s3-resource-simple
-    semver_constraint: ">= 1.0.0 != 1.1.0 != 1.1.1"
+    semver_constraint: ">= 1.0.0, != 1.1.0, != 1.1.1"
 
 - name: gsa-oracle-client
   type: registry-image
