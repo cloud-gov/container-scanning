@@ -188,17 +188,17 @@ resources:
     repository: 18fgsa/s3-resource-simple
     semver_constraint: ">= 1.0.0"
 
-- name: gsa-oracle-client
-  type: registry-image
-  source:
-    repository: 18fgsa/oracle-client
-    semver_constraint: ">= 1.0.0"
+# - name: gsa-oracle-client
+#   type: registry-image
+#   source:
+#     repository: 18fgsa/oracle-client
+#     semver_constraint: ">= 1.0.0"
 
-- name: gsa-sql-clients
-  type: registry-image
-  source:
-    repository: 18fgsa/sql-clients
-    semver_constraint: ">= 1.0.0"
+# - name: gsa-sql-clients
+#   type: registry-image
+#   source:
+#     repository: 18fgsa/sql-clients
+#     semver_constraint: ">= 1.0.0"
 
 - name: slack
   type: slack-notification
@@ -228,23 +228,23 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: ecr-oracle-client
-  type: registry-image
-  source:
-    aws_access_key_id: ((aws-key))
-    aws_secret_access_key: ((aws-secret))
-    repository: oracle-client
-    aws_region: us-gov-west-1
-    semver_constraint: ">= 1.0.0"
+# - name: ecr-oracle-client
+#   type: registry-image
+#   source:
+#     aws_access_key_id: ((aws-key))
+#     aws_secret_access_key: ((aws-secret))
+#     repository: oracle-client
+#     aws_region: us-gov-west-1
+#     semver_constraint: ">= 1.0.0"
 
-- name: ecr-sql-clients
-  type: registry-image
-  source:
-    aws_access_key_id: ((aws-key))
-    aws_secret_access_key: ((aws-secret))
-    repository: sql-clients
-    aws_region: us-gov-west-1
-    semver_constraint: ">= 1.0.0"
+# - name: ecr-sql-clients
+#   type: registry-image
+#   source:
+#     aws_access_key_id: ((aws-key))
+#     aws_secret_access_key: ((aws-secret))
+#     repository: sql-clients
+#     aws_region: us-gov-west-1
+#     semver_constraint: ">= 1.0.0"
 
 - name: image-tags-concourse-task
   type: s3-iam
@@ -253,26 +253,26 @@ resources:
     versioned_file: ecr/tags-concourse-task.json
     region_name: us-gov-west-1
 
-- name: image-tags-s3-resource-simple
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-s3-resource-simple.json
-    region_name: us-gov-west-1
+# - name: image-tags-s3-resource-simple
+#   type: s3-iam
+#   source:
+#     bucket: ((tf-state-bucket))
+#     versioned_file: ecr/tags-s3-resource-simple.json
+#     region_name: us-gov-west-1
 
-- name: image-tags-oracle-client
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-oracle-client.json
-    region_name: us-gov-west-1
+# - name: image-tags-oracle-client
+#   type: s3-iam
+#   source:
+#     bucket: ((tf-state-bucket))
+#     versioned_file: ecr/tags-oracle-client.json
+#     region_name: us-gov-west-1
 
-- name: image-tags-sql-clients
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-sql-clients.json
-    region_name: us-gov-west-1
+# - name: image-tags-sql-clients
+#   type: s3-iam
+#   source:
+#     bucket: ((tf-state-bucket))
+#     versioned_file: ecr/tags-sql-clients.json
+#     region_name: us-gov-west-1
 
 resource_types:
 - name: slack-notification
