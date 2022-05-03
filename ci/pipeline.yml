@@ -55,7 +55,7 @@ jobs:
   - in_parallel: &resources
     - get: weekly
       trigger: true
-    - get: gsa-s3-oracle-client
+    - get: gsa-oracle-client
       params:
         format: oci
       trigger: true
