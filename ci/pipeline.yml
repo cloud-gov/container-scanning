@@ -245,7 +245,7 @@ jobs:
     task: task-((.:tag))
     file: scan-source/ci/scan-ecr-container.yml
     params:
-      IMAGE: "s3-resource-simple:((.:tag))"
+      IMAGE: "((s3-resource-simple-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
 
@@ -271,7 +271,7 @@ jobs:
     task: task-((.:tag))
     file: scan-source/ci/scan-ecr-container.yml
     params:
-      IMAGE: "oracle-client:((.:tag))"
+      IMAGE: "((oracle-client-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
 
@@ -297,7 +297,7 @@ jobs:
     task: task-((.:tag))
     file: scan-source/ci/scan-ecr-container.yml
     params:
-      IMAGE: "sql-clients:((.:tag))"
+      IMAGE: "((sql-clients-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
 
@@ -346,7 +346,7 @@ resources:
   type: registry-image
   source:
     repository: 18fgsa/s3-resource-simple
-    semver_constraint: ">= 1.0.0, != 1.1.0, != 1.1.1"
+    semver_constraint: ">= 1.2.0"
 
 - name: gsa-oracle-client
   type: registry-image
@@ -386,7 +386,7 @@ resources:
     aws_secret_access_key: ((aws-secret))
     repository: s3-resource-simple
     aws_region: us-gov-west-1
-    semver_constraint: ">= 1.0.0"
+    semver_constraint: ">= 1.2.0"
 
 - name: ecr-oracle-client
   type: registry-image
