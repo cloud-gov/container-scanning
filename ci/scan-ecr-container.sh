@@ -18,10 +18,10 @@ mkdir ~/.docker
 printf "${CONFIG}" > ~/.docker/config.json
 
 #scan
-grype ${IMAGE} -q -o json --file output.json
+grype ${IMAGE} -q -o json --file cves/output.json
 grype ${IMAGE} -q -o table --file table.txt
 
-cat output.json | jq '.matches | .[]? |  .vulnerability.severity' >> severity.txt
+cat cves/output.json | jq '.matches | .[]? |  .vulnerability.severity' >> severity.txt
 
 
 echo -n "Critical: " && grep -o -i critical severity.txt | wc -l

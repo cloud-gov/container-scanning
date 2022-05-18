@@ -25,6 +25,8 @@ jobs:
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/concourse-task
+  - task: check
+    file: /scan-source/ci/cve-check.yml
   - put: ecr-concourse-task
     params:
       image: gsa-concourse-task/image.tar
@@ -321,7 +323,9 @@ resources:
             "ci/list-images.sh",
             "ci/list-images.yml",
             "ci/delete-image.sh",
-            "ci/delete-image.yml"]
+            "ci/delete-image.yml",
+            "ci/cve-check.sh",
+            "ci/cve-check.yml"]
 
 - name: terraform-config
   type: git
