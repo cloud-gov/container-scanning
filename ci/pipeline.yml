@@ -22,10 +22,14 @@ jobs:
     - get: scan-source
       trigger: false
   - task: scan
+    output_mapping:
+      cves: cves
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/concourse-task
   - task: check
+    input_mapping:
+      cves: cves
     file: /scan-source/ci/cve-check.yml
   - put: ecr-concourse-task
     params:
