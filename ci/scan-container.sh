@@ -18,8 +18,3 @@ echo -n "Low: $low"
 echo -n "Negligible: $negligible"
 
 cat table.txt
-
-if [ $critical -ge 1 ] || [ $high -ge 1 ]
-then echo -n "Review needed for image ${IMAGE}. Successfully uploaded ${IMAGE} image to ECR" > message/alert.txt
-else echo -n "Successfully uploaded ${IMAGE} image to ECR" > message/alert.txt
-fi

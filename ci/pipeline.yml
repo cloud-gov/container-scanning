@@ -27,6 +27,8 @@ jobs:
       IMAGE: 18fgsa/concourse-task
   - task: check
     file: scan-source/ci/cve-check.yml
+    params:
+      IMAGE: 18fgsa/concourse-task
   - put: ecr-concourse-task
     params:
       image: gsa-concourse-task/image.tar
