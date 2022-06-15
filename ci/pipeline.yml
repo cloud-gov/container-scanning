@@ -76,6 +76,25 @@ jobs:
     params:
       image: gsa-s3-resource-simple/image.tar
       additional_tags: gsa-s3-resource-simple/tag
+  on_failure:
+    put: slack
+    params:
+      text:  |
+        :x: FAILED to upload s3-resource-simple image to ECR
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: '#cg-platform'
+      username: ((username))
+      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+  on_success:
+    put: slack
+    params:
+      text_file: message/alert.txt
+      text: |
+        :white_check_mark: $TEXT_FILE_CONTENT
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: '#cg-platform'
+      username: ((username))
+      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-18fgsa-oracle-client
   plan:
@@ -92,10 +111,33 @@ jobs:
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/oracle-client
+  - task: check
+    file: scan-source/ci/cve-check.yml
+    params:
+      IMAGE: 18fgsa/oracle-client
   - put: ecr-oracle-client
     params:
       image: gsa-oracle-client/image.tar
       additional_tags: gsa-oracle-client/tag
+  on_failure:
+    put: slack
+    params:
+      text:  |
+        :x: FAILED to upload oracle-client image to ECR
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: '#cg-platform'
+      username: ((username))
+      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+  on_success:
+    put: slack
+    params:
+      text_file: message/alert.txt
+      text: |
+        :white_check_mark: $TEXT_FILE_CONTENT
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: '#cg-platform'
+      username: ((username))
+      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-18fgsa-sql-clients
   plan:
@@ -112,10 +154,33 @@ jobs:
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/sql-clients
+  - task: check
+    file: scan-source/ci/cve-check.yml
+    params:
+      IMAGE: 18fgsa/sql-clients
   - put: ecr-sql-clients
     params:
       image: gsa-sql-clients/image.tar
       additional_tags: gsa-sql-clients/tag
+  on_failure:
+    put: slack
+    params:
+      text:  |
+        :x: FAILED to upload sql-clients image to ECR
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: '#cg-platform'
+      username: ((username))
+      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+  on_success:
+    put: slack
+    params:
+      text_file: message/alert.txt
+      text: |
+        :white_check_mark: $TEXT_FILE_CONTENT
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: '#cg-platform'
+      username: ((username))
+      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: terraform-plan-ecr
   plan:
