@@ -68,6 +68,10 @@ jobs:
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/s3-resource-simple
+  - task: check
+    file: scan-source/ci/cve-check.yml
+    params:
+      IMAGE: 18fgsa/s3-resource-simple
   - put: ecr-s3-resource-simple
     params:
       image: gsa-s3-resource-simple/image.tar
