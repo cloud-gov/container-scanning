@@ -234,8 +234,6 @@ jobs:
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
-      AWS_ACCESS_KEY_ID: ((aws-key))
-      AWS_SECRET_ACCESS_KEY: ((aws-secret))
       IMAGE_REPOSITORY: concourse-task
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
