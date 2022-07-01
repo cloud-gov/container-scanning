@@ -400,6 +400,7 @@ resources:
     uri: https://github.com/cloud-gov/container-scanning
     branch: inital-deploy
     paths: [ci/*]
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: scan-source
   type: git
@@ -416,6 +417,7 @@ resources:
             "ci/delete-image.yml",
             "ci/cve-check.sh",
             "ci/cve-check.yml"]
+    commit_verification_keys: ((cloud-gov-pgp-keys))      
 
 - name: terraform-config
   type: git
@@ -423,12 +425,14 @@ resources:
     uri: https://github.com/cloud-gov/container-scanning
     branch: inital-deploy
     paths: [terraform/*]
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: pipeline-tasks
   type: git
   source:
     uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
     branch: master
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: gsa-concourse-task
   type: registry-image
