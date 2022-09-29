@@ -10,6 +10,33 @@ jobs:
   - set_pipeline: self
     file: pipeline-source/ci/pipeline.yml
 
+- name: conmon-18fgsa-concourse-task
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: gsa-concourse-task
+      params:
+        format: oci
+      trigger: false
+    - get: scan-source
+      trigger: false
+  - task: prep-email
+    file: scan-source/ci/conmon-container.yml
+    params:
+      IMAGE: 18fgsa/concourse-task
+  on_success:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for concourse-task image scans"
+      body_text: "Here is the conmon results for concourse-task"
+      attachment_globs: ["cves/output.json"]
+  on_failure:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for concourse-task image scans - Failure"
+      body_text: "The pipeline to conmon-18fgsa-concourse-task has failed! Please check me out *wink*"
+
 - name: scan-18fgsa-concourse-task
   plan:
   - in_parallel: &resources
@@ -532,6 +559,25 @@ resources:
     versioned_file: ecr/tags-sql-clients.json
     region_name: us-gov-west-1
 
+- name: send-an-email
+  type: email-resource
+  source:
+    smtp:
+      host: ((smtp-host))
+      port: ((smtp-port))
+      username: ((smtp-cloudgovbilling.username))
+      password: ((smtp-cloudgovbilling.password))
+      ca_cert: ((smtp-cert.certificate))
+    from: ((smtp-email-from))
+    to: [((smtp-email-to))]
+- name: monthly
+  type: cron-resource
+  source:
+    expression: "0 6 22 * *"
+    location: "America/New_York"
+    fire_immediately: true
+
+
 resource_types:
 - name: slack-notification
   type: docker-image
@@ -542,3 +588,14 @@ resource_types:
   type: docker-image
   source:
     repository: 18fgsa/s3-resource
+
+- name: email-resource
+  type: docker-image
+  source:
+    repository: pcfseceng/email-resource
+    tag: latest
+
+- name: cron-resource
+  type: docker-image
+  source:
+    repository: cftoolsmiths/cron-resource
