@@ -22,7 +22,7 @@ jobs:
     - get: scan-source
       trigger: false
   - task: prep-email
-    file: scan-source/ci/conmon-container.yml
+    file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/concourse-task
   on_success:
