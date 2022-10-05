@@ -18,19 +18,21 @@ jobs:
     - get: gsa-concourse-task
       params:
         format: oci
-      trigger: false
+      resource: ecr-concourse-task
     - get: scan-source
       trigger: false
   - task: prep-email
-    file: scan-source/ci/scan-container.yml
+    file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
-      IMAGE: 18fgsa/concourse-task
+      IMAGE: "((concourse-task-repo))"
+      AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
   on_success:
     put: send-an-email
     params:
       subject_text: "ConMon Results for concourse-task image scans"
       body_text: "Here is the conmon results for concourse-task"
-      attachment_globs: ["cves/output.json"]
+      attachment_globs: ["output.xml"]
   on_failure:
     put: send-an-email
     params:
