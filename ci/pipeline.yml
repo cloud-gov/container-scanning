@@ -40,6 +40,66 @@ jobs:
       subject_text: "ConMon Results for concourse-task image scans - Failure"
       body_text: "The pipeline to conmon-18fgsa-concourse-task has failed! Please check me out *wink*"
 
+- name: conmon-18fgsa-s3-resource-simple
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-s3-resource-simple
+    - get: scan-source
+      trigger: false
+  - task: prep-email
+    file: scan-source/ci/conmon-scan-ecr-container.yml
+    params:
+      FILE: s3-resource-simple
+      IMAGE: "((s3-resource-simple-repo))"
+      AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
+  on_success:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for s3-resource-simple image scans"
+      body_text: "Here is the conmon results for s3-resource-simple"
+      attachment_globs: ["output/s3-resource-simple.xml"]
+  on_failure:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for s3-resource-simple image scans - Failure"
+      body_text: "The pipeline to conmon-18fgsa-s3-resource-simple has failed! Please check me out *wink*"
+
+- name: conmon-18fgsa-sql-clients
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-sql-clients
+    - get: scan-source
+      trigger: false
+  - task: prep-email
+    file: scan-source/ci/conmon-scan-ecr-container.yml
+    params:
+      FILE: sql-clients
+      IMAGE: "((sql-clients-repo))"
+      AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
+  on_success:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for sql-clients image scans"
+      body_text: "Here is the conmon results for sql-clients"
+      attachment_globs: ["output/sql-clients.xml"]
+  on_failure:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for sql-clients image scans - Failure"
+      body_text: "The pipeline to conmon-18fgsa-sql-clients has failed! Please check me out *wink*"
+
 - name: scan-18fgsa-concourse-task
   plan:
   - in_parallel: &resources
