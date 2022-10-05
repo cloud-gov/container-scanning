@@ -10,5 +10,8 @@ inputs:
 - name: scan-source
 - name: image-source
 
+outputs:
+- name: output
+
 run:
   path: scan-source/ci/conmon-scan-ecr-container.sh
