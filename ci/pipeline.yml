@@ -440,6 +440,8 @@ resources:
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
             "ci/scan-ecr-container.yml",
+            "ci/conmon-scan-ecr-container.sh",
+            "ci/conmon-scan-ecr-container.yml",
             "ci/list-images.sh",
             "ci/list-images.yml",
             "ci/delete-image.sh",
