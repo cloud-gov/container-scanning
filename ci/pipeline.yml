@@ -24,6 +24,7 @@ jobs:
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
+      FILE: concourse-task
       IMAGE: "((concourse-task-repo))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
@@ -32,7 +33,7 @@ jobs:
     params:
       subject_text: "ConMon Results for concourse-task image scans"
       body_text: "Here is the conmon results for concourse-task"
-      attachment_globs: ["output/output.xml"]
+      attachment_globs: ["output/concourse-task.xml"]
   on_failure:
     put: send-an-email
     params:
