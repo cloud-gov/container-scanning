@@ -15,7 +15,7 @@ jobs:
   - in_parallel: &resources
     - get: monthly
       trigger: true
-    - get: gsa-concourse-task
+    - get: image-source
       params:
         format: oci
       resource: ecr-concourse-task
