@@ -664,3 +664,10 @@ resource_types:
   type: docker-image
   source:
     repository: cftoolsmiths/cron-resource
+
+- name: grype-scan-ignore-config
+  type: s3-simple
+  source:
+    bucket: cg-container-scanning-config
+    region: us-gov-west-1
+    path: grype.yaml
