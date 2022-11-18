@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cp grype-scan-ignore-config ~/grype.yaml
 grype ${IMAGE} -q -o json --file cves/output.json
 grype ${IMAGE} -q -o table --file table.txt
 
