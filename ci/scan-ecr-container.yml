@@ -6,7 +6,8 @@ image_resource:
   source:
     repository: 18fgsa/concourse-task
 
-inputs: grype-scan-ignore-config
+inputs: 
+- name: grype-scan-ignore-config
 - name: scan-source
 
 run:
