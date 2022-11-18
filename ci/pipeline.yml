@@ -642,6 +642,12 @@ resources:
     location: "America/New_York"
     fire_immediately: true
 
+- name: grype-scan-ignore-config
+  type: s3-simple
+  source:
+    bucket: cg-container-scanning-config
+    region: us-gov-west-1
+    path: grype.yaml
 
 resource_types:
 - name: slack-notification
@@ -664,10 +670,3 @@ resource_types:
   type: docker-image
   source:
     repository: cftoolsmiths/cron-resource
-
-- name: grype-scan-ignore-config
-  type: s3-simple
-  source:
-    bucket: cg-container-scanning-config
-    region: us-gov-west-1
-    path: grype.yaml
