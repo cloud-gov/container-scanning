@@ -672,3 +672,8 @@ resource_types:
   type: docker-image
   source:
     repository: cftoolsmiths/cron-resource
+
+- name: s3-simple
+  type: docker-image
+  source:
+    repository: 18fgsa/s3-resource-simple
