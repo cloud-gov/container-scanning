@@ -649,7 +649,7 @@ resources:
   source:
     bucket: cg-container-scanning
     region: us-gov-west-1
-    path: grype.yaml
+    
 
 resource_types:
 - name: slack-notification
