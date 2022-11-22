@@ -647,7 +647,7 @@ resources:
 - name: grype-scan-ignore-config
   type: s3-simple
   source:
-    bucket: cg-container-scanning-config
+    bucket: cg-container-scanning
     region: us-gov-west-1
     path: grype.yaml
 
