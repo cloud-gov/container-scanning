@@ -21,6 +21,8 @@ jobs:
       resource: ecr-concourse-task
     - get: scan-source
       trigger: false
+    - get: grype-scan-ignore-config
+      trigger: true
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -51,6 +53,8 @@ jobs:
       resource: ecr-s3-resource-simple
     - get: scan-source
       trigger: false
+    - get: grype-scan-ignore-config
+      trigger: true
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -81,6 +85,8 @@ jobs:
       resource: ecr-sql-clients
     - get: scan-source
       trigger: false
+    - get: grype-scan-ignore-config
+      trigger: true
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -111,6 +117,8 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
+    - get: grype-scan-ignore-config
+      trigger: true
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
@@ -199,6 +207,8 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
+    - get: grype-scan-ignore-config
+      trigger: true
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
@@ -242,6 +252,8 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
+    - get: grype-scan-ignore-config
+      trigger: true
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
