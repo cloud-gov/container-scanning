@@ -1,8 +1,8 @@
 #!/bin/bash
 ls grype-scan-ignore-config
 cp grype-scan-ignore-config/grype.yaml ~/grype.yaml
-grype ${IMAGE} -q -o json --file cves/output.json
-grype ${IMAGE} -q -o table --file table.txt
+grype ${IMAGE} -c ~/grype.yaml -q -o json --file cves/output.json
+grype ${IMAGE} -c ~/grype.yaml -q -o table --file table.txt
 
 cat cves/output.json | jq '.matches | .[]? |  .vulnerability.severity' >> severity.txt
 
