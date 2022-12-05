@@ -21,8 +21,6 @@ jobs:
       resource: ecr-concourse-task
     - get: scan-source
       trigger: false
-    - get: grype-scan-ignore-config
-      trigger: true
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
