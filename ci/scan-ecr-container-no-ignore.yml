@@ -1,0 +1,13 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: 18fgsa/concourse-task
+
+inputs: 
+- name: scan-source
+
+run:
+  path: scan-source/ci/scan-ecr-container.sh
