@@ -522,8 +522,6 @@ jobs:
     params:
       format: oci
     resource: ecr-harden-concourse-task
-  - get: grype-scan-ignore-config
-      trigger: true
   - load_var: tags
     file: image-tags-harden-concourse-task/tags-harden-concourse-task.json
   - across:
