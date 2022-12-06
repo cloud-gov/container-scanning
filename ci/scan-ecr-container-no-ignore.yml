@@ -10,4 +10,4 @@ inputs:
 - name: scan-source
 
 run:
-  path: scan-source/ci/scan-ecr-container.sh
+  path: scan-source/ci/scan-ecr-container-no-ignore.sh
