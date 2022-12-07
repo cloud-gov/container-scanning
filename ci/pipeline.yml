@@ -416,8 +416,6 @@ jobs:
   - get: scan-source
     trigger: false
     passed: [list-tags-concourse-task]
-  - get: grype-scan-ignore-config
-    trigger: true
   - get: gsa-concourse-task
     params:
       format: oci
@@ -444,8 +442,6 @@ jobs:
   - get: scan-source
     trigger: false  
     passed: [list-tags-s3-resource-simple]
-  - get: grype-scan-ignore-config
-    trigger: true
   - get: gsa-s3-resource-simple
     params:
       format: oci
@@ -472,8 +468,6 @@ jobs:
   - get: scan-source
     trigger: false
     passed: [list-tags-oracle-client]
-  - get: grype-scan-ignore-config
-    trigger: true
   - get: gsa-oracle-client
     params:
       format: oci
@@ -500,8 +494,6 @@ jobs:
   - get: scan-source
     trigger: false
     passed: [list-tags-sql-clients]
-  - get: grype-scan-ignore-config
-    trigger: true
   - get: gsa-sql-clients
     params:
       format: oci
