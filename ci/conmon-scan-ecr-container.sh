@@ -21,5 +21,5 @@ TAG=$(cat image-source/tag)
 
 #scan
 cp grype-scan-ignore-config ~/grype.yaml
-grype ${IMAGE}:${TAG} -q -o cyclonedx --file output/${FILE}.xml
+grype ${IMAGE}:${TAG} -c . ~/grype.yaml -q -o cyclonedx --file output/${FILE}.xml
 

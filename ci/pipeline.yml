@@ -21,6 +21,8 @@ jobs:
       resource: ecr-concourse-task
     - get: scan-source
       trigger: false
+    - get: grype-scan-ignore-config
+      trigger: true
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -401,6 +403,9 @@ jobs:
   - get: scan-source
     trigger: false
     passed: [list-tags-concourse-task]
+  - get: grype-scan-ignore-config
+    trigger: true
+    passed: [list-tags-concourse-task]
   - get: gsa-concourse-task
     params:
       format: oci
@@ -425,7 +430,10 @@ jobs:
     trigger: true
     passed: [list-tags-s3-resource-simple]
   - get: scan-source
-    trigger: false
+    trigger: false  
+    passed: [list-tags-s3-resource-simple]
+  - get: grype-scan-ignore-config
+    trigger: true
     passed: [list-tags-s3-resource-simple]
   - get: gsa-s3-resource-simple
     params:
@@ -453,6 +461,9 @@ jobs:
   - get: scan-source
     trigger: false
     passed: [list-tags-oracle-client]
+  - get: grype-scan-ignore-config
+    trigger: true
+    passed: [list-tags-oracle-client]
   - get: gsa-oracle-client
     params:
       format: oci
@@ -478,6 +489,9 @@ jobs:
     passed: [list-tags-sql-clients]
   - get: scan-source
     trigger: false
+    passed: [list-tags-sql-clients]
+  - get: grype-scan-ignore-config
+    trigger: true
     passed: [list-tags-sql-clients]
   - get: gsa-sql-clients
     params:
