@@ -10,6 +10,17 @@ jobs:
   - set_pipeline: self
     file: pipeline-source/ci/pipeline.yml
 
+- name: audit-harden-concourse-task
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: scan-source
+      trigger: false
+    - get: ecr-harden-concourse-task
+  - task: audit
+    file: audit-ecr-container.yml
+
 - name: conmon-18fgsa-concourse-task
   plan:
   - in_parallel: &resources
@@ -571,7 +582,9 @@ resources:
             "ci/delete-image.sh",
             "ci/delete-image.yml",
             "ci/cve-check.sh",
-            "ci/cve-check.yml"]
+            "ci/cve-check.yml",
+            "ci/audit-ecr-container.sh",
+            "ci/audit-ecr-container.yml"]
     commit_verification_keys: ((cloud-gov-pgp-keys))      
 
 - name: terraform-config
