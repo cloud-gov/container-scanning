@@ -21,13 +21,13 @@ jobs:
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
   on_success:
-    put: send-test-email
+    put: send-an-email
     params:
       subject_text: "Audit Results for harden-concourse-task image"
       body_text: "Here are the audit results for harden-concourse-task"
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
-    put: send-test-email
+    put: send-an-email
     params:
       subject_text: "Audit Results for harden-concourse-task image - Failure"
       body_text: "The pipeline to audit-harden-concourse-task has failed! Please check me out *wink*"
@@ -738,18 +738,6 @@ resources:
       ca_cert: ((smtp-cert.certificate))
     from: ((smtp-email-from))
     to: [((smtp-email-to))]
-
-- name: send-test-email
-  type: email-resource
-  source:
-    smtp:
-      host: ((smtp-host))
-      port: ((smtp-port))
-      username: ((smtp-cloudgovbilling.username))
-      password: ((smtp-cloudgovbilling.password))
-      ca_cert: ((smtp-cert.certificate))
-    from: ((smtp-email-from))
-    to: [((test-email-to))]
 
 - name: monthly
   type: cron-resource
