@@ -992,6 +992,7 @@ groups:
   jobs:
   - configure-pipeline
   - audit-harden-concourse-task
+  - audit-harden-s3-resource-simple
   - conmon-18fgsa-concourse-task
   - conmon-18fgsa-s3-resource-simple
   - conmon-18fgsa-sql-clients
@@ -1058,3 +1059,4 @@ groups:
 - name: audit
   jobs:
   - audit-harden-concourse-task
+  - audit-harden-s3-resource-simple
