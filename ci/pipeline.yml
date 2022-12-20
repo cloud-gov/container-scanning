@@ -644,7 +644,7 @@ jobs:
   - get: gsa-concourse-task
     params:
       format: oci
-    resource: ecr-harden-oracle-client
+    resource: ecr-harden-s3-resource-simple
   - load_var: tags
     file: image-tags-harden-s3-resource-simple/tags-harden-s3-resource-simple.json
   - across:
