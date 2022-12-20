@@ -775,7 +775,7 @@ resources:
     versioned_file: ecr/tags-harden-concourse-task.json
     region_name: us-gov-west-1
 
--name: image-tags-harden-oracle-client
+- name: image-tags-harden-oracle-client
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
