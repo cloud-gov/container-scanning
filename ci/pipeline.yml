@@ -1046,6 +1046,8 @@ groups:
   - configure-pipeline
   - audit-harden-concourse-task
   - audit-harden-s3-resource-simple
+  - audit-harden-oracle-client
+  - audit-harden-sql-client
   - conmon-18fgsa-concourse-task
   - conmon-18fgsa-s3-resource-simple
   - conmon-18fgsa-sql-clients
@@ -1113,3 +1115,5 @@ groups:
   jobs:
   - audit-harden-concourse-task
   - audit-harden-s3-resource-simple
+  - audit-harden-oracle-client
+  - audit-harden-sql-client
