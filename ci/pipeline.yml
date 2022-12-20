@@ -62,6 +62,59 @@ jobs:
       subject_text: "Audit Results for harden-s3-resource-simple image - Failure"
       body_text: "The pipeline to audit-harden-s3-resource-simple has failed! Please check me out *wink*"
 
+- name: audit-harden-oracle-client
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: scan-source
+      trigger: false
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-harden-oracle-client
+  - task: audit
+    file: scan-source/ci/audit-ecr-container.yml
+    vars: {image: harden-oracle-image-task}
+  on_success:
+    put: send-test-email
+    params:
+      subject_text: "Audit Results for harden-oracle-client-task image"
+      body_text: "Here are the audit results for harden-oracle-client-task"
+      attachment_globs: ["audit/cis-audit.html"]
+  on_failure:
+    put: send-test-email
+    params:
+      subject_text: "Audit Results for harden-oracle-client-task image - Failure"
+      body_text: "The pipeline to audit-harden-oracle-client-task has failed! Please check me out *wink*"
+
+- name: audit-harden-sql-client
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: scan-source
+      trigger: false
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-harden-sql-client
+  - task: audit
+    file: scan-source/ci/audit-ecr-container.yml
+    vars: {image: harden-sql-client-image}
+  on_success:
+    put: send-test-email
+    params:
+      subject_text: "Audit Results for harden-sql-client image"
+      body_text: "Here are the audit results for harden-sql-client"
+      attachment_globs: ["audit/cis-audit.html"]
+  on_failure:
+    put: send-test-email
+    params:
+      subject_text: "Audit Results for harden-sql-client image - Failure"
+      body_text: "The pipeline to audit-harden-sql-client has failed! Please check me out *wink*"
+
+
 - name: conmon-18fgsa-concourse-task
   plan:
   - in_parallel: &resources
