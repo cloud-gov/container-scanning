@@ -6,13 +6,13 @@ image_resource:
   source:
     aws_access_key_id: ((aws-key))
     aws_secret_access_key: ((aws-secret))
-    repository: harden-concourse-task
+    repository: ((image))
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
 inputs: 
 - name: scan-source
-- name: ecr-harden-concourse-task
+- name: image-source
 
 outputs:
 - name: audit

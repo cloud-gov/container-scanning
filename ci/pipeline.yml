@@ -17,20 +17,50 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
-    - get: ecr-harden-concourse-task
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-harden-concourse-task
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
+    vars: {image: ((harden-concourse-task-repo))}
   on_success:
-    put: send-an-email
+    put: send-test-email
     params:
       subject_text: "Audit Results for harden-concourse-task image"
       body_text: "Here are the audit results for harden-concourse-task"
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
-    put: send-an-email
+    put: send-test-email
     params:
       subject_text: "Audit Results for harden-concourse-task image - Failure"
       body_text: "The pipeline to audit-harden-concourse-task has failed! Please check me out *wink*"
+
+- name: audit-harden-s3-resource-simple
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: scan-source
+      trigger: false
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-harden-s3-resource-simple
+  - task: audit
+    file: scan-source/ci/audit-ecr-container.yml
+    vars: {image: ((harden-s3-resource-simple-repo))}
+  on_success:
+    put: send-test-email
+    params:
+      subject_text: "Audit Results for harden-s3-resource-simple image"
+      body_text: "Here are the audit results for harden-s3-resource-simple"
+      attachment_globs: ["audit/cis-audit.html"]
+  on_failure:
+    put: send-test-email
+    params:
+      subject_text: "Audit Results for harden-s3-resource-simple image - Failure"
+      body_text: "The pipeline to audit-harden-s3-resource-simple has failed! Please check me out *wink*"
 
 - name: conmon-18fgsa-concourse-task
   plan:
@@ -903,6 +933,18 @@ resources:
       ca_cert: ((smtp-cert.certificate))
     from: ((smtp-email-from))
     to: [((smtp-email-to))]
+
+- name: send-test-email
+  type: email-resource
+  source:
+    smtp:
+      host: ((smtp-host))
+      port: ((smtp-port))
+      username: ((smtp-cloudgovbilling.username))
+      password: ((smtp-cloudgovbilling.password))
+      ca_cert: ((smtp-cert.certificate))
+    from: ((smtp-email-from))
+    to: [((test-email-to))]
 
 - name: monthly
   type: cron-resource
