@@ -672,7 +672,7 @@ jobs:
       format: oci
     resource: ecr-harden-sql-client
   - load_var: tags
-    file: image-tags-harden-sql-client-image/tags-harden-sql-client-image.json
+    file: image-tags-harden-sql-client/tags-harden-sql-client-image.json
   - across:
     - var: tag
       values: ((.:tags))
