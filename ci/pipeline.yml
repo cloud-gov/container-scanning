@@ -779,3 +779,63 @@ resource_types:
   type: docker-image
   source:
     repository: 18fgsa/s3-resource-simple
+
+groups:
+- name: all
+  jobs:
+  - configure-pipeline
+  - audit-harden-concourse-task
+  - conmon-18fgsa-concourse-task
+  - conmon-18fgsa-s3-resource-simple
+  - conmon-18fgsa-sql-clients
+  - scan-18fgsa-concourse-task
+  - scan-18fgsa-s3-resource-simple
+  - scan-18fgsa-oracle-client
+  - scan-18fgsa-sql-clients
+  - terraform-plan-ecr
+  - terraform-apply-ecr
+  - list-tags-concourse-task
+  - list-tags-s3-resource-simple
+  - list-tags-oracle-client
+  - list-tags-sql-clients
+  - list-tags-harden-concourse-task
+  - delete-tag-concourse-task
+  - scan-ecr-concourse-task
+  - scan-ecr-s3-resource-simple
+  - scan-ecr-oracle-client
+  - scan-ecr-sql-clients
+  - scan-ecr-harden-concourse-task
+- name: 18fgsa-scan
+  jobs:
+  - scan-18fgsa-concourse-task
+  - scan-18fgsa-s3-resource-simple
+  - scan-18fgsa-oracle-client
+  - scan-18fgsa-sql-clients
+- name: tags
+  jobs:
+  - list-tags-concourse-task
+  - list-tags-s3-resource-simple
+  - list-tags-oracle-client
+  - list-tags-sql-clients
+  - list-tags-harden-concourse-task
+- name: ecr-scan
+  jobs:
+  - scan-ecr-concourse-task
+  - scan-ecr-s3-resource-simple
+  - scan-ecr-oracle-client
+  - scan-ecr-sql-clients
+- name: conmon-scan
+  jobs:
+  - conmon-18fgsa-concourse-task
+  - conmon-18fgsa-s3-resource-simple
+  - conmon-18fgsa-sql-clients
+- name: hardened-scan
+  jobs:
+  - scan-ecr-harden-concourse-task
+- name: terraform
+  jobs:
+  - terraform-plan-ecr
+  - terraform-apply-ecr
+- name: audit
+  jobs:
+  - audit-harden-concourse-task
