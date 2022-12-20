@@ -419,6 +419,19 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
+- name: list-tags-harden-oracle-client
+  plan:
+  - get: scan-source
+  - get: weekly
+    trigger: true
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: harden-oracle-image-task
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
 - name: delete-tag-concourse-task
   plan:
   - get: scan-source
@@ -566,6 +579,32 @@ jobs:
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
 
+- name: scan-ecr-harden-oracle-client
+  plan:
+  - get: image-tags-harden-oracle-client
+    trigger: true
+  - get: weekly
+    trigger: true
+    passed: [list-tags-harden-oracle-client]
+  - get: scan-source
+    trigger: false
+    passed: [list-tags-harden-oracle-client]
+  - get: gsa-concourse-task
+    params:
+      format: oci
+    resource: ecr-harden-oracle-client
+  - load_var: tags
+    file: image-tags-harden-oracle-client/tags-harden-oracle-client.json
+  - across:
+    - var: tag
+      values: ((.:tags))
+    task: task-((.:tag))
+    file: scan-source/ci/scan-ecr-container-no-ignore.yml
+    params:
+      IMAGE: "((harden-oracle-client-repo)):((.:tag))"
+      AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
+
 resources:
 - name: pipeline-source
   type: git
@@ -692,6 +731,15 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
+- name: ecr-harden-oracle-client
+  type: registry-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: harden-oracle-image-task
+    aws_region: us-gov-west-1
+    semver_constraint: ">= 1.0.0"
+
 - name: image-tags-concourse-task
   type: s3-iam
   source:
@@ -725,6 +773,13 @@ resources:
   source:
     bucket: ((tf-state-bucket))
     versioned_file: ecr/tags-harden-concourse-task.json
+    region_name: us-gov-west-1
+
+-name: image-tags-harden-oracle-client
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-harden-oracle-client.json
     region_name: us-gov-west-1
 
 - name: send-an-email
