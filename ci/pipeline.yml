@@ -594,7 +594,7 @@ jobs:
       format: oci
     resource: ecr-harden-oracle-client
   - load_var: tags
-    file: image-tags-harden-oracle-client/tags-harden-oracle-image-task.json
+    file: image-tags-harden-oracle-image-task/tags-harden-oracle-image-task.json
   - across:
     - var: tag
       values: ((.:tags))
