@@ -242,7 +242,7 @@ jobs:
       text:  |
         :x: FAILED to upload concourse-task image to ECR
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
   on_success:
@@ -252,7 +252,7 @@ jobs:
       text: |
         :white_check_mark: $TEXT_FILE_CONTENT
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
@@ -287,7 +287,7 @@ jobs:
       text:  |
         :x: FAILED to upload s3-resource-simple image to ECR
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
   on_success:
@@ -297,7 +297,7 @@ jobs:
       text: |
         :white_check_mark: $TEXT_FILE_CONTENT
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
@@ -332,7 +332,7 @@ jobs:
       text:  |
         :x: FAILED to upload oracle-client image to ECR
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
   on_success:
@@ -342,7 +342,7 @@ jobs:
       text: |
         :white_check_mark: $TEXT_FILE_CONTENT
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
@@ -377,7 +377,7 @@ jobs:
       text:  |
         :x: FAILED to upload sql-clients image to ECR
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
   on_success:
@@ -387,7 +387,7 @@ jobs:
       text: |
         :white_check_mark: $TEXT_FILE_CONTENT
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-platform-news'
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
@@ -577,6 +577,10 @@ jobs:
       IMAGE: "((concourse-task-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
+    task: check-((.:tag))
+    file: scan-source/ci/ecr-cve-check.yml
+    params:
+      IMAGE: "((concourse-task-repo)):((.:tag))"
 
 - name: scan-ecr-s3-resource-simple
   plan:
@@ -795,7 +799,9 @@ resources:
             "ci/cve-check.sh",
             "ci/cve-check.yml",
             "ci/audit-ecr-container.sh",
-            "ci/audit-ecr-container.yml"]
+            "ci/audit-ecr-container.yml",
+            "ci/ecr-cve-check.sh",
+            "ci/ecr-cve-check.yml"]
     commit_verification_keys: ((cloud-gov-pgp-keys))      
 
 - name: terraform-config
