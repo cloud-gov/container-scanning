@@ -582,6 +582,26 @@ jobs:
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((concourse-task-repo)):((.:tag))"
+      on_failure:
+        put: slack
+        params:
+          text:  |
+            :x: FAILED to upload concourse-task image to ECR
+            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          channel: '#cg-platform-news'
+          username: ((username))
+          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+      on_success:
+        put: slack
+        params:
+          text_file: message/alert.txt
+          text: |
+            :white_check_mark: $TEXT_FILE_CONTENT
+            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          channel: '#cg-platform-news'
+          username: ((username))
+          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+
 
 - name: scan-ecr-s3-resource-simple
   plan:
