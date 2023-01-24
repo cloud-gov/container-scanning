@@ -582,6 +582,7 @@ jobs:
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((concourse-task-repo)):((.:tag))"
+        IMAGENAME: "concourse-task:((.:tag))"
       on_failure:
         put: slack
         params:
