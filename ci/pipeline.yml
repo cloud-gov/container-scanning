@@ -624,12 +624,17 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-    task: task-((.:tag))
-    file: scan-source/ci/scan-ecr-container.yml
-    params:
-      IMAGE: "((s3-resource-simple-repo)):((.:tag))"
-      AWS_DEFAULT_REGION: us-gov-west-1
-      REGISTRY: ((aws-ecr-registry))
+    do:
+    - task: scan-((.:tag))
+      file: scan-source/ci/scan-ecr-container.yml
+      params:
+        IMAGE: "((s3-resource-simple-repo)):((.:tag))"
+        AWS_DEFAULT_REGION: us-gov-west-1
+        REGISTRY: ((aws-ecr-registry))
+    - task: check-((.:tag))
+      file: scan-source/ci/ecr-cve-check.yml
+      params:
+        IMAGE: "((s3-resource-simple-repo)):((.:tag))"
 
 - name: scan-ecr-oracle-client
   plan:
