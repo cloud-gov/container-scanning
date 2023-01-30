@@ -552,20 +552,21 @@ jobs:
 
 - name: scan-ecr-concourse-task
   plan:
-  - get: image-tags-concourse-task
-    trigger: true
-  - get: weekly
-    trigger: true
-    passed: [list-tags-concourse-task]
-  - get: scan-source
-    trigger: false
-    passed: [list-tags-concourse-task]
-  - get: grype-scan-ignore-config
-    trigger: true
-  - get: gsa-concourse-task
-    params:
-      format: oci
-    resource: ecr-concourse-task
+  - in_parallel: &resources
+    - get: image-tags-concourse-task
+      trigger: true
+    - get: weekly
+      trigger: true
+      passed: [list-tags-concourse-task]
+    - get: scan-source
+      trigger: false
+      passed: [list-tags-concourse-task]
+    - get: grype-scan-ignore-config
+      trigger: true
+    - get: gsa-concourse-task
+      params:
+        format: oci
+      resource: ecr-concourse-task
   - load_var: tags
     file: image-tags-concourse-task/tags-concourse-task.json
   - across:
@@ -765,18 +766,21 @@ jobs:
 
 - name: scan-ecr-harden-concourse-task
   plan:
-  - get: image-tags-harden-concourse-task
-    trigger: true
-  - get: weekly
-    trigger: true
-    passed: [list-tags-harden-concourse-task]
-  - get: scan-source
-    trigger: false
-    passed: [list-tags-harden-concourse-task]
-  - get: gsa-concourse-task
-    params:
-      format: oci
-    resource: ecr-harden-concourse-task
+  - in_parallel: &resources
+    - get: image-tags-harden-concourse-task
+      trigger: true
+    - get: weekly
+      trigger: true
+      passed: [list-tags-harden-concourse-task]
+    - get: scan-source
+      trigger: false
+      passed: [list-tags-harden-concourse-task]
+    - get: grype-scan-ignore-config
+      trigger: true
+    - get: gsa-concourse-task
+      params:
+        format: oci
+      resource: ecr-harden-concourse-task
   - load_var: tags
     file: image-tags-harden-concourse-task/tags-harden-concourse-task.json
   - across:
@@ -784,7 +788,7 @@ jobs:
       values: ((.:tags))
     do:
     - task: scan-((.:tag))
-      file: scan-source/ci/scan-ecr-container-no-ignore.yml
+      file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
