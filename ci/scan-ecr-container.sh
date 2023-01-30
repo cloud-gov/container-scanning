@@ -18,7 +18,7 @@ mkdir ~/.docker
 printf "${CONFIG}" > ~/.docker/config.json
 
 #scan
-cp grype-scan-ignore-config ~/grype.yaml
+cp grype-scan-ignore-config/grype.yaml ~/grype.yaml
 grype ${IMAGE} -c grype-scan-ignore-config/grype.yaml -q -o json --file cves/output.json
 grype ${IMAGE} -c grype-scan-ignore-config/grype.yaml -q -o table --file table.txt
 
