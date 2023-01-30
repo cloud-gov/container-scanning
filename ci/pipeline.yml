@@ -572,7 +572,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
@@ -628,7 +627,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
@@ -683,7 +681,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
@@ -738,7 +735,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
@@ -793,7 +789,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
@@ -849,7 +844,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
@@ -905,7 +899,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
@@ -961,7 +954,6 @@ jobs:
   - across:
     - var: tag
       values: ((.:tags))
-      max_in_flight: 3
     do:
     - task: task-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
