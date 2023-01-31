@@ -992,7 +992,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: inital-deploy
+    branch: main
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
