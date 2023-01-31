@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: 18fgsa/concourse-task
+
+inputs:
+  - name: scan-source
+
+outputs:
+  - name: image-list
+
+run:
+  path: scan-source/ci/list-images.sh

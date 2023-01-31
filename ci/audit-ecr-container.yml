@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: ((image))
+    aws_region: us-gov-west-1
+    semver_constraint: ">= 1.0.0"
+
+inputs: 
+- name: scan-source
+- name: image-source
+
+outputs:
+- name: audit
+
+run:
+  path: scan-source/ci/audit-ecr-container.sh
