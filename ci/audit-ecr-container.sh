@@ -5,8 +5,6 @@
 mkdir audit
 touch audit/cis-audit.html
 
-#run cis audit
+#run cis audit and put html results into cis-audit.html file
 
-cis-audit level1_server
-
-cp /usr/share/ubuntu-scap-security-guides/cis-18.04-report.html audit/cis-audit.html
+usg audit cis_level1_server --html-file audit/cis-audit.html
