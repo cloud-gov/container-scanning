@@ -170,7 +170,7 @@ jobs:
     - get: scan-source
       trigger: false
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
@@ -215,7 +215,7 @@ jobs:
     - get: scan-source
       trigger: false
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
@@ -260,7 +260,7 @@ jobs:
     - get: scan-source
       trigger: false
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
@@ -305,7 +305,7 @@ jobs:
     - get: scan-source
       trigger: false
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
@@ -441,6 +441,8 @@ jobs:
   - get: scan-source
   - get: weekly
     trigger: true
+  - get: ecr-harden-concourse-task
+    trigger: true
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -483,7 +485,7 @@ jobs:
       trigger: false
       passed: [list-tags-concourse-task]
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
     - get: gsa-concourse-task
       params:
         format: oci
@@ -538,7 +540,7 @@ jobs:
       trigger: false  
       passed: [list-tags-s3-resource-simple]
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
     - get: gsa-s3-resource-simple
       params:
         format: oci
@@ -592,7 +594,7 @@ jobs:
       trigger: false
       passed: [list-tags-oracle-client]
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
     - get: gsa-oracle-client
       params:
         format: oci
@@ -646,7 +648,7 @@ jobs:
       trigger: false
       passed: [list-tags-sql-clients]
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
     - get: gsa-sql-clients
       params:
         format: oci
@@ -700,7 +702,7 @@ jobs:
       trigger: false
       passed: [list-tags-harden-concourse-task]
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
     - get: gsa-concourse-task
       params:
         format: oci
@@ -754,7 +756,7 @@ jobs:
       trigger: false
       passed: [list-tags-harden-s3-resource-simple]
     - get: grype-scan-ignore-config
-      trigger: true
+      trigger: false
     - get: gsa-concourse-task
       params:
         format: oci
@@ -801,7 +803,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: update-pipeline-triggers
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -809,7 +811,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: update-pipeline-triggers
     paths: ["ci/scan-container.sh",
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
