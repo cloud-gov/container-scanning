@@ -18,17 +18,21 @@ mkdir ~/.docker
 printf "${CONFIG}" > ~/.docker/config.json
 
 #scan
-cp grype-scan-ignore-config/grype.yaml ~/grype.yaml
 grype ${IMAGE} -c grype-scan-ignore-config/grype.yaml -q -o json --file cves/output.json
 grype ${IMAGE} -c grype-scan-ignore-config/grype.yaml -q -o table --file table.txt
 
 cat cves/output.json | jq '.matches | .[]? |  .vulnerability.severity' >> severity.txt
 
+critical=$(grep -o -i critical severity.txt | wc -l)
+high=$(grep -o -i high severity.txt | wc -l)
+medium=$(grep -o -i medium severity.txt | wc -l)
+low=$(grep -o -i low severity.txt | wc -l)
+negligible=$(grep -o -i negligible severity.txt | wc -l)
 
-echo -n "Critical: " && grep -o -i critical severity.txt | wc -l
-echo -n "High: " && grep -o -i high severity.txt | wc -l
-echo -n "Medium: " && grep -o -i medium severity.txt | wc -l
-echo -n "Low: " && grep -o -i low severity.txt | wc -l
-echo -n "Negligible: " && grep -o -i negligible severity.txt | wc -l
+echo "Critical: $critical"
+echo "High: $high"
+echo "Medium: $medium"
+echo "Low: $low"
+echo "Negligible: $negligible"
 
 cat table.txt

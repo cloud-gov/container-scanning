@@ -10,10 +10,10 @@ medium=$(grep -o -i medium severity.txt | wc -l)
 low=$(grep -o -i low severity.txt | wc -l)
 negligible=$(grep -o -i negligible severity.txt | wc -l)
 
-echo "Critical: $critical\n"
-echo "High: $high\n"
-echo "Medium: $medium\n"
-echo "Low: $low\n"
-echo "Negligible: $negligible\n"
+echo "Critical: $critical"
+echo "High: $high"
+echo "Medium: $medium"
+echo "Low: $low"
+echo "Negligible: $negligible"
 
 cat table.txt
