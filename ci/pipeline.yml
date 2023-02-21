@@ -738,7 +738,7 @@ jobs:
         params:
           text_file: message/alert.txt
           text: |
-            :white_check_mark: $TEXT_FILE_CONTENT
+            $TEXT_FILE_CONTENT
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
           channel: '#cg-platform-news'
           username: ((username))
@@ -792,7 +792,7 @@ jobs:
         params:
           text_file: message/alert.txt
           text: |
-            :white_check_mark: $TEXT_FILE_CONTENT
+            $TEXT_FILE_CONTENT
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
           channel: '#cg-platform-news'
           username: ((username))
