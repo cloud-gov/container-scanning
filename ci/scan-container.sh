@@ -1,6 +1,4 @@
 #!/bin/bash
-ls grype-scan-ignore-config
-cp grype-scan-ignore-config/grype.yaml ~/grype.yaml
 grype ${IMAGE} -c grype-scan-ignore-config/grype.yaml -q -o json --file cves/output.json
 grype ${IMAGE} -c grype-scan-ignore-config/grype.yaml -q -o table --file table.txt
 
@@ -12,10 +10,10 @@ medium=$(grep -o -i medium severity.txt | wc -l)
 low=$(grep -o -i low severity.txt | wc -l)
 negligible=$(grep -o -i negligible severity.txt | wc -l)
 
-echo -n "Critical: $critical"
-echo -n "High: $high"
-echo -n "Medium: $medium"
-echo -n "Low: $low"
-echo -n "Negligible: $negligible"
+echo "Critical: $critical"
+echo "High: $high"
+echo "Medium: $medium"
+echo "Low: $low"
+echo "Negligible: $negligible"
 
 cat table.txt
