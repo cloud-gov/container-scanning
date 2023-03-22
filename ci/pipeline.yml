@@ -36,6 +36,33 @@ jobs:
       subject_text: "Audit Results for harden-concourse-task image - Failure"
       body_text: "The pipeline to audit-harden-concourse-task has failed! Please check me out *wink*"
 
+- name: audit-pages-build-container
+  plan:
+  - in_parallel: &resources
+    - get: monthly
+      trigger: true
+    - get: scan-source
+      trigger: false
+    - get: image-source
+      params:
+        format: oci
+      resource: pages-build-container-image
+  - task: audit
+    file: scan-source/ci/audit-ecr-container.yml
+    vars: {image: pages-build-container}
+  on_success:
+    put: send-an-email
+    params:
+      subject_text: "Audit Results for pages-build-container image"
+      body_text: "Here are the audit results for pages-build-container"
+      attachment_globs: ["audit/cis-audit.html"]
+  on_failure:
+    put: send-an-email
+    params:
+      subject_text: "Audit Results for pages-build-container image - Failure"
+      body_text: "The pipeline to pages-build-container has failed! Please check me out *wink*"
+
+
 - name: audit-harden-s3-resource-simple
   plan:
   - in_parallel: &resources
@@ -451,6 +478,21 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
+- name: list-tags-pages-build-container
+  plan:
+  - get: scan-source
+  - get: weekly
+    trigger: true
+  - get: pages-build-container-image
+    trigger: true
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: pages-build-container
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
 - name: list-tags-harden-s3-resource-simple
   plan:
   - get: scan-source
@@ -716,13 +758,13 @@ jobs:
     - task: scan-((.:tag))
       file: scan-source/ci/scan-ecr-container.yml
       params:
-        IMAGE: "((harden-concourse-task-repo)):((.:tag))"
+        IMAGE: "((pages-build-container-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
     - task: check-((.:tag))
       file: scan-source/ci/ecr-cve-check.yml
       params:
-        IMAGE: "((harden-concourse-task-repo)):((.:tag))"
+        IMAGE: "((pages-build-container-repo)):((.:tag))"
         IMAGENAME: "harden-concourse-task:((.:tag))"
       on_failure:
         put: slack
@@ -743,6 +785,61 @@ jobs:
           channel: '#cg-platform-news'
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+
+- name: scan-ecr-pages-build-container
+  plan:
+  - in_parallel: &resources
+    - get: image-tags-pages-build-container
+      trigger: true
+    - get: weekly
+      trigger: true
+      passed: [list-tags-pages-build-container]
+    - get: scan-source
+      trigger: false
+      passed: [list-tags-pages-build-container]
+    - get: grype-scan-ignore-config
+      trigger: false
+    - get: gsa-concourse-task
+      params:
+        format: oci
+      resource: pages-build-container-image
+  - load_var: tags
+    file: image-tags-pages-build-container/tags-pages-build-container.json
+  - across:
+    - var: tag
+      values: ((.:tags))
+    do:
+    - task: scan-((.:tag))
+      file: scan-source/ci/scan-ecr-container.yml
+      params:
+        IMAGE: "((pages-build-container-repo)):((.:tag))"
+        AWS_DEFAULT_REGION: us-gov-west-1
+        REGISTRY: ((aws-ecr-registry))
+    - task: check-((.:tag))
+      file: scan-source/ci/ecr-cve-check.yml
+      params:
+        IMAGE: "((pages-build-container-repo)):((.:tag))"
+        IMAGENAME: "pages-build-container:((.:tag))"
+      on_failure:
+        put: slack
+        params:
+          text:  |
+            :x: FAILED pages-build-container CVE check
+            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          channel: '#cg-platform-news'
+          username: ((username))
+          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+      on_success:
+        put: slack
+        params:
+          text_file: message/alert.txt
+          text: |
+            $TEXT_FILE_CONTENT
+            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          channel: '#cg-platform-news'
+          username: ((username))
+          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+
 
 - name: scan-ecr-harden-s3-resource-simple
   plan:
@@ -925,6 +1022,14 @@ resources:
     repository: harden-concourse-task
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
+
+- name: pages-build-container-image
+  type: registry-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: pages-build-container
+    aws_region: us-gov-west-1
 
 - name: ecr-harden-s3-resource-simple
   type: registry-image
