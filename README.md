@@ -2,9 +2,9 @@
 
 ## Why this project
 
-Gotta scan our containers!
+Gotta scan our containers! (the pages edition)
 
-- 
+This is a long-running branch which maintains cloud.gov Pages specific code.
 
 ## Contributing
 
