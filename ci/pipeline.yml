@@ -60,7 +60,7 @@ jobs:
         :terraform: $BUILD_JOB_NAME needs review
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
       channel: '#cg-platform'
-      username: ((username))
+      username: ((slack-username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: terraform-apply-ecr
@@ -134,7 +134,7 @@ jobs:
             :x: FAILED pages-build-container CVE check
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
           channel: '#cg-platform-news'
-          username: ((username))
+          username: ((slack-username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
       on_success:
         put: slack
@@ -144,7 +144,7 @@ jobs:
             $TEXT_FILE_CONTENT
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
           channel: '#cg-platform-news'
-          username: ((username))
+          username: ((slack-username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 
@@ -160,7 +160,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: pages
     paths: ["ci/scan-container.sh",
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
@@ -184,7 +184,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: pages
     paths: [terraform/*]
 
 - name: pipeline-tasks
@@ -192,6 +192,13 @@ resources:
   source:
     uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
     branch: master
+
+- name: image-tags-pages-build-container
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-concourse-task.json
+    region_name: us-gov-west-1
 
 - name: slack
   type: slack-notification
@@ -206,8 +213,8 @@ resources:
 - name: pages-build-container-image
   type: registry-image
   source:
-    aws_access_key_id: ((aws-key))
-    aws_secret_access_key: ((aws-secret))
+    aws_access_key_id: ((ecr-aws-key))
+    aws_secret_access_key: ((ecr-aws-secret))
     repository: pages-build-container
     aws_region: us-gov-west-1
 
