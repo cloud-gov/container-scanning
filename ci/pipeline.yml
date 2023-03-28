@@ -217,6 +217,7 @@ resources:
     aws_secret_access_key: ((ecr-aws-secret))
     repository: pages-build-container
     aws_region: us-gov-west-1
+    tag: pages-production
 
 - name: send-an-email
   type: email-resource
