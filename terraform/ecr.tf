@@ -33,3 +33,27 @@ resource "aws_ecr_repository" "pages_repository" {
   image_tag_mutability = "MUTABLE"
 }
 
+resource "aws_ecr_lifecycle_policy" "expire_untagged_images" {
+  count = length(var.pages_repositories)
+
+  repository = var.pages_repositories[count.index]
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Expire untagged images older than 7 days",
+            "selection": {
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": 7
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
