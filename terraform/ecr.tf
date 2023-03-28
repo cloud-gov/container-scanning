@@ -30,20 +30,3 @@ resource "aws_ecr_repository" "repository" {
   name                 = var.repositories[count.index]
   image_tag_mutability = "IMMUTABLE"
 }
-
-
-// Pages Repositories
-
-variable "pages_repositories" {
-  type = list(string)
-  default = ["pages-build-container"]
-}
-
-
-resource "aws_ecr_repository" "pages_repository" {
-  count = length(var.pages_repositories)
-
-  name                 = var.pages_repositories[count.index]
-  image_tag_mutability = "MUTABLE"
-}
-
