@@ -47,7 +47,7 @@ jobs:
     file: terraform-templates/terraform/terraform-apply.yml
     params: &tf-ecr
       TERRAFORM_ACTION: plan
-      TEMPLATE_SUBDIR: terraform/pages/container-scanning/
+      TEMPLATE_SUBDIR: terraform/
       STACK_NAME: pages-ecr
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       AWS_DEFAULT_REGION: us-gov-west-1
