@@ -23,7 +23,9 @@ jobs:
       resource: pages-build-container-image
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
-    vars: {image: pages-build-container}
+    vars:
+      image: pages-build-container
+      tag: pages-production
   on_success:
     put: send-an-email
     params:
