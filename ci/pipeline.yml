@@ -47,8 +47,8 @@ jobs:
     file: terraform-templates/terraform/terraform-apply.yml
     params: &tf-ecr
       TERRAFORM_ACTION: plan
-      TEMPLATE_SUBDIR: terraform/
-      STACK_NAME: ecr
+      TEMPLATE_SUBDIR: terraform/pages/container-scanning/
+      STACK_NAME: pages-ecr
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       AWS_DEFAULT_REGION: us-gov-west-1
       TF_VAR_remote_state_bucket: ((tf-state-bucket))
@@ -59,7 +59,7 @@ jobs:
       text:  |
         :terraform: $BUILD_JOB_NAME needs review
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
+      channel: '#cg-pages-logs'
       username: ((slack-username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
@@ -133,7 +133,7 @@ jobs:
           text:  |
             :x: FAILED pages-build-container CVE check
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
+          channel: '#cg-pages-logs'
           username: ((slack-username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
       on_success:
@@ -143,7 +143,7 @@ jobs:
           text: |
             $TEXT_FILE_CONTENT
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
+          channel: '#cg-pages-logs'
           username: ((slack-username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
