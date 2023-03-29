@@ -108,7 +108,7 @@ jobs:
       passed: [list-tags-pages-build-container]
     - get: grype-scan-ignore-config
       trigger: false
-    - get: gsa-concourse-task
+    - get: image-source
       params:
         format: oci
       resource: pages-build-container-image
@@ -199,7 +199,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-concourse-task.json
+    versioned_file: ecr/tags-pages-build-container.json
     region_name: us-gov-west-1
 
 - name: slack
