@@ -1,6 +1,5 @@
 ---
 jobs:
-
 - name: configure-pipeline
   plan:
   - in_parallel:
@@ -12,15 +11,15 @@ jobs:
 
 - name: audit-harden-concourse-task
   plan:
-  - in_parallel: &resources
+  - in_parallel: &common_resources
     - get: monthly
       trigger: true
     - get: scan-source
       trigger: false
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-harden-concourse-task
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-concourse-task
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
@@ -40,11 +39,11 @@ jobs:
 
 - name: audit-harden-s3-resource-simple
   plan:
-  - in_parallel: *resources
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-harden-s3-resource-simple
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-s3-resource-simple
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
@@ -64,13 +63,13 @@ jobs:
 
 - name: conmon-harden-concourse-task
   plan:
-  - in_parallel: *resources
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-harden-concourse-task
-    - get: grype-scan-ignore-config
-      trigger: false
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-concourse-task
+  - get: grype-scan-ignore-config
+    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -81,24 +80,24 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for concourse-task image scans"
-      body_text: "Here is the conmon results for concourse-task"
+      subject_text: "ConMon Results for harden-concourse-task image scans"
+      body_text: "Here is the conmon results for harden-concourse-task"
       attachment_globs: ["output/concourse-task.xml"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for concourse-task image scans - Failure"
-      body_text: "The pipeline to conmon-18fgsa-concourse-task has failed! Please check me out *wink*"
+      subject_text: "ConMon Results for harden-concourse-task image scans - Failure"
+      body_text: "The pipeline to conmon-harden-concourse-task has failed! Please check me out *wink*"
 
 - name: conmon-harden-s3-resource-simple
   plan:
-  - in_parallel: *resources
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-s3-resource-simple
-    - get: grype-scan-ignore-config
-      trigger: false
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-s3-resource-simple
+  - get: grype-scan-ignore-config
+    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -109,24 +108,24 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for s3-resource-simple image scans"
+      subject_text: "ConMon Results for harden-s3-resource-simple image scans"
       body_text: "Here is the conmon results for s3-resource-simple"
       attachment_globs: ["output/s3-resource-simple.xml"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for s3-resource-simple image scans - Failure"
-      body_text: "The pipeline to conmon-18fgsa-s3-resource-simple has failed! Please check me out *wink*"
+      subject_text: "ConMon Results for harden-s3-resource-simple image scans - Failure"
+      body_text: "The pipeline to conmon-harden-s3-resource-simple has failed! Please check me out *wink*"
 
 - name: conmon-18fgsa-sql-clients
   plan:
-  - in_parallel: *resources
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-sql-clients
-    - get: grype-scan-ignore-config
-      trigger: false
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-sql-clients
+  - get: grype-scan-ignore-config
+    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -363,13 +362,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((oracle-client-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((oracle-client-repo)):((.:tag))"
@@ -417,13 +416,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((sql-clients-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((sql-clients-repo)):((.:tag))"
@@ -471,13 +470,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
@@ -525,13 +524,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
@@ -752,6 +751,7 @@ groups:
   - audit-harden-s3-resource-simple
   - conmon-harden-concourse-task
   - conmon-harden-s3-resource-simple
+  - conmon-18fgsa-sql-clients
   - scan-18fgsa-oracle-client
   - scan-18fgsa-sql-clients
   - terraform-plan-ecr
@@ -764,7 +764,7 @@ groups:
   - scan-ecr-sql-clients
   - scan-ecr-harden-concourse-task
   - scan-ecr-harden-s3-resource-simple
-- name: 18fgsa-scan
+- name: docker-scan
   jobs:
   - scan-18fgsa-oracle-client
   - scan-18fgsa-sql-clients
@@ -781,7 +781,8 @@ groups:
 - name: conmon-scan
   jobs:
   - conmon-harden-concourse-task
-  - conmon-harden-resource-simple
+  - conmon-harden-s3-resource-simple
+  - conmon-18fgsa-sql-clients
 - name: hardened-scan
   jobs:
   - scan-ecr-harden-concourse-task
