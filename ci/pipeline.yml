@@ -1,6 +1,5 @@
 ---
 jobs:
-
 - name: configure-pipeline
   plan:
   - in_parallel:
@@ -12,15 +11,15 @@ jobs:
 
 - name: audit-harden-concourse-task
   plan:
-  - in_parallel: &resources
+  - in_parallel: &common_resources
     - get: monthly
       trigger: true
     - get: scan-source
       trigger: false
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-harden-concourse-task
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-concourse-task
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
@@ -40,15 +39,11 @@ jobs:
 
 - name: audit-harden-s3-resource-simple
   plan:
-  - in_parallel: &resources
-    - get: monthly
-      trigger: true
-    - get: scan-source
-      trigger: false
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-harden-s3-resource-simple
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-s3-resource-simple
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
@@ -66,83 +61,71 @@ jobs:
       subject_text: "Audit Results for harden-s3-resource-simple image - Failure"
       body_text: "The pipeline to audit-harden-s3-resource-simple has failed! Please check me out *wink*"
 
-- name: conmon-18fgsa-concourse-task
+- name: conmon-harden-concourse-task
   plan:
-  - in_parallel: &resources
-    - get: monthly
-      trigger: true
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-concourse-task
-    - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
-      trigger: false
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-concourse-task
+  - get: grype-scan-ignore-config
+    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
       FILE: concourse-task
-      IMAGE: "((concourse-task-repo))"
+      IMAGE: "((harden-concourse-task-repo))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   on_success:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for concourse-task image scans"
-      body_text: "Here is the conmon results for concourse-task"
+      subject_text: "ConMon Results for harden-concourse-task image scans"
+      body_text: "Here is the conmon results for harden-concourse-task"
       attachment_globs: ["output/concourse-task.xml"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for concourse-task image scans - Failure"
-      body_text: "The pipeline to conmon-18fgsa-concourse-task has failed! Please check me out *wink*"
+      subject_text: "ConMon Results for harden-concourse-task image scans - Failure"
+      body_text: "The pipeline to conmon-harden-concourse-task has failed! Please check me out *wink*"
 
-- name: conmon-18fgsa-s3-resource-simple
+- name: conmon-harden-s3-resource-simple
   plan:
-  - in_parallel: &resources
-    - get: monthly
-      trigger: true
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-s3-resource-simple
-    - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
-      trigger: false
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-s3-resource-simple
+  - get: grype-scan-ignore-config
+    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
       FILE: s3-resource-simple
-      IMAGE: "((s3-resource-simple-repo))"
+      IMAGE: "((harden-s3-resource-simple-repo))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   on_success:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for s3-resource-simple image scans"
+      subject_text: "ConMon Results for harden-s3-resource-simple image scans"
       body_text: "Here is the conmon results for s3-resource-simple"
       attachment_globs: ["output/s3-resource-simple.xml"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for s3-resource-simple image scans - Failure"
-      body_text: "The pipeline to conmon-18fgsa-s3-resource-simple has failed! Please check me out *wink*"
+      subject_text: "ConMon Results for harden-s3-resource-simple image scans - Failure"
+      body_text: "The pipeline to conmon-harden-s3-resource-simple has failed! Please check me out *wink*"
 
 - name: conmon-18fgsa-sql-clients
   plan:
-  - in_parallel: &resources
-    - get: monthly
-      trigger: true
-    - get: image-source
-      params:
-        format: oci
-      resource: ecr-sql-clients
-    - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
-      trigger: false
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-sql-clients
+  - get: grype-scan-ignore-config
+    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -162,99 +145,9 @@ jobs:
       subject_text: "ConMon Results for sql-clients image scans - Failure"
       body_text: "The pipeline to conmon-18fgsa-sql-clients has failed! Please check me out *wink*"
 
-- name: scan-18fgsa-concourse-task
-  plan:
-  - in_parallel: &resources
-    - get: weekly
-      trigger: true
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      trigger: true
-    - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
-      trigger: false
-  - task: scan
-    file: scan-source/ci/scan-container.yml
-    params:
-      IMAGE: 18fgsa/concourse-task
-  - task: check
-    file: scan-source/ci/cve-check.yml
-    params:
-      IMAGE: 18fgsa/concourse-task
-  - put: ecr-concourse-task
-    params:
-      image: gsa-concourse-task/image.tar
-      additional_tags: gsa-concourse-task/tag
-  on_failure:
-    put: slack
-    params:
-      text:  |
-        :x: FAILED to upload concourse-task image to ECR
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform-news'
-      username: ((username))
-      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-  on_success:
-    put: slack
-    params:
-      text_file: message/alert.txt
-      text: |
-        :white_check_mark: $TEXT_FILE_CONTENT
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform-news'
-      username: ((username))
-      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-
-- name: scan-18fgsa-s3-resource-simple
-  plan:
-  - in_parallel: &resources
-    - get: weekly
-      trigger: true
-    - get: gsa-s3-resource-simple
-      params:
-        format: oci
-      trigger: true
-    - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
-      trigger: false
-  - task: scan
-    file: scan-source/ci/scan-container.yml
-    params:
-      IMAGE: 18fgsa/s3-resource-simple
-  - task: check
-    file: scan-source/ci/cve-check.yml
-    params:
-      IMAGE: 18fgsa/s3-resource-simple
-  - put: ecr-s3-resource-simple
-    params:
-      image: gsa-s3-resource-simple/image.tar
-      additional_tags: gsa-s3-resource-simple/tag
-  on_failure:
-    put: slack
-    params:
-      text:  |
-        :x: FAILED to upload s3-resource-simple image to ECR
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform-news'
-      username: ((username))
-      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-  on_success:
-    put: slack
-    params:
-      text_file: message/alert.txt
-      text: |
-        :white_check_mark: $TEXT_FILE_CONTENT
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform-news'
-      username: ((username))
-      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-
 - name: scan-18fgsa-oracle-client
   plan:
-  - in_parallel: &resources
+  - in_parallel:
     - get: weekly
       trigger: true
     - get: gsa-oracle-client
@@ -299,7 +192,7 @@ jobs:
 
 - name: scan-18fgsa-sql-clients
   plan:
-  - in_parallel: &resources
+  - in_parallel:
     - get: weekly
       trigger: true
     - get: gsa-sql-clients
@@ -384,40 +277,13 @@ jobs:
       <<: *tf-ecr
       TERRAFORM_ACTION: apply
 
-- name: list-tags-concourse-task
-  plan:
-  - get: scan-source
-    passed: [scan-18fgsa-concourse-task]
-  - get: weekly
-    trigger: true
-  - task: list-images
-    file: scan-source/ci/list-images.yml
-    params:
-      AWS_DEFAULT_REGION: us-gov-west-1
-      IMAGE_REPOSITORY: concourse-task
-      S3_TFSTATE_BUCKET: ((tf-state-bucket))
-      STACK_NAME: ecr
-
-- name: list-tags-s3-resource-simple
-  plan:
-  - get: scan-source
-    passed: [scan-18fgsa-s3-resource-simple]
-  - get: weekly
-    trigger: true
-  - task: list-images
-    file: scan-source/ci/list-images.yml
-    params:
-      AWS_DEFAULT_REGION: us-gov-west-1
-      IMAGE_REPOSITORY: s3-resource-simple
-      S3_TFSTATE_BUCKET: ((tf-state-bucket))
-      STACK_NAME: ecr
-
 - name: list-tags-oracle-client
   plan:
-  - get: scan-source
-    passed: [scan-18fgsa-oracle-client]
-  - get: weekly
-    trigger: true
+  - in_parallel:
+    - get: scan-source
+      passed: [scan-18fgsa-oracle-client]
+    - get: weekly
+      trigger: true
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -428,10 +294,11 @@ jobs:
 
 - name: list-tags-sql-clients
   plan:
-  - get: scan-source
-    passed: [scan-18fgsa-sql-clients]
-  - get: weekly
-    trigger: true
+  - in_parallel:
+    - get: scan-source
+      passed: [scan-18fgsa-sql-clients]
+    - get: weekly
+      trigger: true
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -442,11 +309,12 @@ jobs:
 
 - name: list-tags-harden-concourse-task
   plan:
-  - get: scan-source
-  - get: weekly
-    trigger: true
-  - get: ecr-harden-concourse-task
-    trigger: true
+  - in_parallel:
+    - get: scan-source
+    - get: weekly
+      trigger: true
+    - get: ecr-harden-concourse-task
+      trigger: true
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -457,9 +325,12 @@ jobs:
 
 - name: list-tags-harden-s3-resource-simple
   plan:
-  - get: scan-source
-  - get: weekly
-    trigger: true
+  - in_parallel:
+    - get: scan-source
+    - get: weekly
+      trigger: true
+    - get: ecr-harden-s3-resource-simple
+      trigger: true
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -468,127 +339,9 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
-- name: delete-tag-concourse-task
-  plan:
-  - get: scan-source
-  - task: delete-image
-    file: scan-source/ci/delete-image.yml
-    params:
-      AWS_DEFAULT_REGION: us-gov-west-1
-      IMAGE_REPOSITORY: concourse-task
-
-- name: scan-ecr-concourse-task
-  plan:
-  - in_parallel: &resources
-    - get: image-tags-concourse-task
-      trigger: true
-    - get: weekly
-      trigger: true
-      passed: [list-tags-concourse-task]
-    - get: scan-source
-      trigger: false
-      passed: [list-tags-concourse-task]
-    - get: grype-scan-ignore-config
-      trigger: false
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      resource: ecr-concourse-task
-  - load_var: tags
-    file: image-tags-concourse-task/tags-concourse-task.json
-  - across:
-    - var: tag
-      values: ((.:tags))
-    do:
-    - task: scan-((.:tag))
-      file: scan-source/ci/scan-ecr-container.yml
-      params:
-        IMAGE: "((concourse-task-repo)):((.:tag))"
-        AWS_DEFAULT_REGION: us-gov-west-1
-        REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
-      file: scan-source/ci/ecr-cve-check.yml
-      params:
-        IMAGE: "((concourse-task-repo)):((.:tag))"
-        IMAGENAME: "concourse-task:((.:tag))"
-      on_failure:
-        put: slack
-        params:
-          text:  |
-            :x: FAILED concourse-task CVE check
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
-          username: ((username))
-          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-      on_success:
-        put: slack
-        params:
-          text_file: message/alert.txt
-          text: |
-            :white_check_mark: $TEXT_FILE_CONTENT
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
-          username: ((username))
-          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-
-
-- name: scan-ecr-s3-resource-simple
-  plan:
-  - in_parallel: &resources
-    - get: image-tags-s3-resource-simple
-      trigger: true
-    - get: weekly
-      trigger: true
-      passed: [list-tags-s3-resource-simple]
-    - get: scan-source
-      trigger: false  
-      passed: [list-tags-s3-resource-simple]
-    - get: grype-scan-ignore-config
-      trigger: false
-    - get: gsa-s3-resource-simple
-      params:
-        format: oci
-      resource: ecr-s3-resource-simple
-  - load_var: tags
-    file: image-tags-s3-resource-simple/tags-s3-resource-simple.json
-  - across:
-    - var: tag
-      values: ((.:tags))
-    do:
-    - task: scan-((.:tag))
-      file: scan-source/ci/scan-ecr-container.yml
-      params:
-        IMAGE: "((s3-resource-simple-repo)):((.:tag))"
-        AWS_DEFAULT_REGION: us-gov-west-1
-        REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
-      file: scan-source/ci/ecr-cve-check.yml
-      params:
-        IMAGE: "((s3-resource-simple-repo)):((.:tag))"
-        IMAGENAME: "s3-resource-simple:((.:tag))"
-      on_failure:
-        put: slack
-        params:
-          text:  |
-            :x: FAILED s3-resource-simple CVE check
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
-          username: ((username))
-          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-      on_success:
-        put: slack
-        params:
-          text_file: message/alert.txt
-          text: |
-            :white_check_mark: $TEXT_FILE_CONTENT
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
-          username: ((username))
-          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-
 - name: scan-ecr-oracle-client
   plan:
-  - in_parallel: &resources
+  - in_parallel:
     - get: image-tags-oracle-client
       trigger: true
     - get: weekly
@@ -609,13 +362,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((oracle-client-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((oracle-client-repo)):((.:tag))"
@@ -642,7 +395,7 @@ jobs:
 
 - name: scan-ecr-sql-clients
   plan:
-  - in_parallel: &resources
+  - in_parallel:
     - get: image-tags-sql-clients
       trigger: true
     - get: weekly
@@ -663,13 +416,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((sql-clients-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((sql-clients-repo)):((.:tag))"
@@ -696,7 +449,7 @@ jobs:
 
 - name: scan-ecr-harden-concourse-task
   plan:
-  - in_parallel: &resources
+  - in_parallel:
     - get: image-tags-harden-concourse-task
       trigger: true
     - get: weekly
@@ -717,13 +470,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
@@ -750,7 +503,7 @@ jobs:
 
 - name: scan-ecr-harden-s3-resource-simple
   plan:
-  - in_parallel: &resources
+  - in_parallel:
     - get: image-tags-harden-s3-resource-simple
       trigger: true
     - get: weekly
@@ -771,13 +524,13 @@ jobs:
     - var: tag
       values: ((.:tags))
     do:
-    - task: scan-((.:tag))
+    - task: scan
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
-    - task: check-((.:tag))
+    - task: check
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
@@ -851,18 +604,6 @@ resources:
     branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: gsa-concourse-task
-  type: registry-image
-  source:
-    repository: 18fgsa/concourse-task
-    semver_constraint: ">= 1.0.0"
-
-- name: gsa-s3-resource-simple
-  type: registry-image
-  source:
-    repository: 18fgsa/s3-resource-simple
-    semver_constraint: ">= 1.2.0"
-
 - name: gsa-oracle-client
   type: registry-image
   source:
@@ -884,24 +625,6 @@ resources:
   type: time
   source:
     days: [Tuesday]
-
-- name: ecr-concourse-task
-  type: registry-image
-  source:
-    aws_access_key_id: ((aws-key))
-    aws_secret_access_key: ((aws-secret))
-    repository: concourse-task
-    aws_region: us-gov-west-1
-    semver_constraint: ">= 1.0.0"
-
-- name: ecr-s3-resource-simple
-  type: registry-image
-  source:
-    aws_access_key_id: ((aws-key))
-    aws_secret_access_key: ((aws-secret))
-    repository: s3-resource-simple
-    aws_region: us-gov-west-1
-    semver_constraint: ">= 1.2.0"
 
 - name: ecr-oracle-client
   type: registry-image
@@ -938,20 +661,6 @@ resources:
     repository: harden-s3-resource-simple
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
-
-- name: image-tags-concourse-task
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-concourse-task.json
-    region_name: us-gov-west-1
-
-- name: image-tags-s3-resource-simple
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-s3-resource-simple.json
-    region_name: us-gov-west-1
 
 - name: image-tags-oracle-client
   type: s3-iam
@@ -1040,52 +749,39 @@ groups:
   - configure-pipeline
   - audit-harden-concourse-task
   - audit-harden-s3-resource-simple
-  - conmon-18fgsa-concourse-task
-  - conmon-18fgsa-s3-resource-simple
+  - conmon-harden-concourse-task
+  - conmon-harden-s3-resource-simple
   - conmon-18fgsa-sql-clients
-  - scan-18fgsa-concourse-task
-  - scan-18fgsa-s3-resource-simple
   - scan-18fgsa-oracle-client
   - scan-18fgsa-sql-clients
   - terraform-plan-ecr
   - terraform-apply-ecr
-  - list-tags-concourse-task
-  - list-tags-s3-resource-simple
   - list-tags-oracle-client
   - list-tags-sql-clients
   - list-tags-harden-concourse-task
   - list-tags-harden-s3-resource-simple
-  - delete-tag-concourse-task
-  - scan-ecr-concourse-task
-  - scan-ecr-s3-resource-simple
   - scan-ecr-oracle-client
   - scan-ecr-sql-clients
   - scan-ecr-harden-concourse-task
   - scan-ecr-harden-s3-resource-simple
-- name: 18fgsa-scan
+- name: docker-scan
   jobs:
-  - scan-18fgsa-concourse-task
-  - scan-18fgsa-s3-resource-simple
   - scan-18fgsa-oracle-client
   - scan-18fgsa-sql-clients
 - name: tags
   jobs:
-  - list-tags-concourse-task
-  - list-tags-s3-resource-simple
   - list-tags-oracle-client
   - list-tags-sql-clients
   - list-tags-harden-concourse-task
   - list-tags-harden-s3-resource-simple
 - name: ecr-scan
   jobs:
-  - scan-ecr-concourse-task
-  - scan-ecr-s3-resource-simple
   - scan-ecr-oracle-client
   - scan-ecr-sql-clients
 - name: conmon-scan
   jobs:
-  - conmon-18fgsa-concourse-task
-  - conmon-18fgsa-s3-resource-simple
+  - conmon-harden-concourse-task
+  - conmon-harden-s3-resource-simple
   - conmon-18fgsa-sql-clients
 - name: hardened-scan
   jobs:
