@@ -145,6 +145,98 @@ jobs:
       subject_text: "ConMon Results for sql-clients image scans - Failure"
       body_text: "The pipeline to conmon-18fgsa-sql-clients has failed! Please check me out *wink*"
 
+- name: scan-latest-harden-concourse-task-image
+  plan:
+  - in_parallel:
+    - get: weekly
+      trigger: true
+    - get: scan-source
+      trigger: false
+    - get: grype-scan-ignore-config
+      trigger: false
+    - get: ecr-harden-concourse-task
+      params:
+        format: oci
+      trigger: true
+  - load_var: tag
+    file: ecr-harden-concourse-task/tag
+  - task: scan
+    file: scan-source/ci/scan-ecr-container.yml
+    params:
+      IMAGE: "((harden-concourse-task-repo)):((.:tag))"
+      AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
+  - task: check
+    file: scan-source/ci/ecr-cve-check.yml
+    params:
+      IMAGE: "((harden-concourse-task-repo)):((.:tag))"
+      IMAGENAME: "harden-concourse-task:((.:tag))"
+    on_failure:
+      put: slack
+      params:
+        text:  |
+          :x: FAILED harden-concourse-task CVE check
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+        channel: '#cg-platform-news'
+        username: ((username))
+        icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+    on_success:
+      put: slack
+      params:
+        text_file: message/alert.txt
+        text: |
+          $TEXT_FILE_CONTENT
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+        channel: '#cg-platform-news'
+        username: ((username))
+        icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+
+- name: scan-latest-harden-s3-resource-simple-image
+  plan:
+  - in_parallel:
+    - get: weekly
+      trigger: true
+    - get: scan-source
+      trigger: false
+    - get: grype-scan-ignore-config
+      trigger: false
+    - get: ecr-harden-s3-resource-simple
+      params:
+        format: oci
+      trigger: true
+  - load_var: tag
+    file: ecr-harden-s3-resource-simple/tag
+  - task: scan
+    file: scan-source/ci/scan-ecr-container.yml
+    params:
+      IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
+      AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
+  - task: check
+    file: scan-source/ci/ecr-cve-check.yml
+    params:
+      IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
+      IMAGENAME: "harden-s3-resource-simple:((.:tag))"
+    on_failure:
+      put: slack
+      params:
+        text:  |
+          :x: FAILED harden-s3-resource-simple CVE check
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+        channel: '#cg-platform-news'
+        username: ((username))
+        icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+    on_success:
+      put: slack
+      params:
+        text_file: message/alert.txt
+        text: |
+          $TEXT_FILE_CONTENT
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+        channel: '#cg-platform-news'
+        username: ((username))
+        icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+
 - name: scan-18fgsa-oracle-client
   plan:
   - in_parallel:
@@ -311,10 +403,10 @@ jobs:
   plan:
   - in_parallel:
     - get: scan-source
+      passed: [scan-latest-harden-concourse-task-image]
     - get: weekly
       trigger: true
     - get: ecr-harden-concourse-task
-      trigger: true
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -327,10 +419,10 @@ jobs:
   plan:
   - in_parallel:
     - get: scan-source
+      passed: [scan-latest-harden-s3-resource-simple-image]
     - get: weekly
       trigger: true
     - get: ecr-harden-s3-resource-simple
-      trigger: true
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -764,6 +856,8 @@ groups:
   - scan-ecr-sql-clients
   - scan-ecr-harden-concourse-task
   - scan-ecr-harden-s3-resource-simple
+  - scan-latest-harden-concourse-task-image
+  - scan-latest-harden-s3-resource-simple-image
 - name: docker-scan
   jobs:
   - scan-18fgsa-oracle-client
@@ -785,6 +879,10 @@ groups:
   - conmon-18fgsa-sql-clients
 - name: hardened-scan
   jobs:
+  - scan-latest-harden-concourse-task-image
+  - scan-latest-harden-s3-resource-simple-image
+  - list-tags-harden-concourse-task
+  - list-tags-harden-s3-resource-simple
   - scan-ecr-harden-concourse-task
   - scan-ecr-harden-s3-resource-simple
 - name: terraform
