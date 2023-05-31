@@ -20,11 +20,13 @@ jobs:
     params:
       format: oci
     resource: ecr-harden-concourse-task
+  - load_var: latest-tag
+    file: image-source/tag
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
       image: harden-concourse-task
-      tag: ((harden-concourse-task-tag))
+      tag: ((.:latest-tag))
   on_success:
     put: send-an-email
     params:
@@ -44,11 +46,13 @@ jobs:
     params:
       format: oci
     resource: ecr-harden-s3-resource-simple
+  - load_var: latest-tag
+    file: image-source/tag
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
       image: harden-s3-resource-simple
-      tag: ((harden-s3-resource-simple-tag))
+      tag: ((.:latest-tag))
   on_success:
     put: send-an-email
     params:
