@@ -20,5 +20,5 @@ printf "${CONFIG}" > ~/.docker/config.json
 TAG=$(cat image-source/tag)
 
 #scan
-grype ${IMAGE}:${TAG} -c ci/grype.yaml -q -o cyclonedx --file output/${FILE}.xml
+grype ${IMAGE}:${TAG} -c scan-source/ci/grype.yaml -q -o cyclonedx --file output/${FILE}.xml
 
