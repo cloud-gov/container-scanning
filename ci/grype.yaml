@@ -1,0 +1,6 @@
+#Grype ignore configurations.
+
+ignore:
+  - vulnerability: CVE-2007-4642  #false positive, alerting on package of same name
+  - vulnerability: CVE-2007-4644  #false positive, alerting on package of same name
+  - vulnerability: CVE-2018-20225 #disputed as intended functionality
