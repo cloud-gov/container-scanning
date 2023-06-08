@@ -72,8 +72,6 @@ jobs:
     params:
       format: oci
     resource: ecr-harden-concourse-task
-  - get: grype-scan-ignore-config
-    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -100,8 +98,6 @@ jobs:
     params:
       format: oci
     resource: ecr-harden-s3-resource-simple
-  - get: grype-scan-ignore-config
-    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -128,8 +124,6 @@ jobs:
     params:
       format: oci
     resource: ecr-sql-clients
-  - get: grype-scan-ignore-config
-    trigger: false
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -155,8 +149,6 @@ jobs:
     - get: weekly
       trigger: true
     - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
       trigger: false
     - get: ecr-harden-concourse-task
       params:
@@ -201,8 +193,6 @@ jobs:
     - get: weekly
       trigger: true
     - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
       trigger: false
     - get: ecr-harden-s3-resource-simple
       params:
@@ -252,8 +242,6 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
-    - get: grype-scan-ignore-config
-      trigger: false
   - task: scan
     file: scan-source/ci/scan-container.yml
     params:
@@ -296,8 +284,6 @@ jobs:
         format: oci
       trigger: true
     - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
       trigger: false
   - task: scan
     file: scan-source/ci/scan-container.yml
@@ -446,8 +432,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-oracle-client]
-    - get: grype-scan-ignore-config
-      trigger: false
     - get: gsa-oracle-client
       params:
         format: oci
@@ -500,8 +484,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-sql-clients]
-    - get: grype-scan-ignore-config
-      trigger: false
     - get: gsa-sql-clients
       params:
         format: oci
@@ -554,8 +536,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-harden-concourse-task]
-    - get: grype-scan-ignore-config
-      trigger: false
     - get: gsa-concourse-task
       params:
         format: oci
@@ -608,8 +588,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-harden-s3-resource-simple]
-    - get: grype-scan-ignore-config
-      trigger: false
     - get: gsa-concourse-task
       params:
         format: oci
@@ -682,7 +660,8 @@ resources:
             "ci/audit-ecr-container.sh",
             "ci/audit-ecr-container.yml",
             "ci/ecr-cve-check.sh",
-            "ci/ecr-cve-check.yml"]
+            "ci/ecr-cve-check.yml",
+            "ci/grype.yml"]
     commit_verification_keys: ((cloud-gov-pgp-keys))      
 
 - name: terraform-config
@@ -804,13 +783,6 @@ resources:
     expression: "0 6 22 * *"
     location: "America/New_York"
     fire_immediately: true
-
-- name: grype-scan-ignore-config
-  type: s3-simple
-  source:
-    bucket: cg-container-scanning
-    region: us-gov-west-1
-    
 
 resource_types:
 - name: slack-notification
