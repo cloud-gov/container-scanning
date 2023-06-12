@@ -558,6 +558,7 @@ jobs:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
         IMAGENAME: "harden-concourse-task:((.:tag))"
       on_failure:
+        do:
         - put: slack
           params:
             text:  |
