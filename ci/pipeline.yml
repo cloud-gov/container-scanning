@@ -572,6 +572,7 @@ jobs:
           params:
             IMAGE_REPOSITORY: "harden-concourse-task"
             IMAGE_TAG: "((.:tag))"
+            AWS_DEFAULT_REGION: us-gov-west-1
           on_failure:
             put: slack
             params:
