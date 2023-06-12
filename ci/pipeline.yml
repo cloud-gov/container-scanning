@@ -393,9 +393,9 @@ jobs:
   plan:
   - in_parallel:
     - get: scan-source
-      passed: [scan-latest-harden-concourse-task-image]
     - get: weekly
       trigger: true
+      passed: [scan-latest-harden-concourse-task-image]
     - get: ecr-harden-concourse-task
   - task: list-images
     file: scan-source/ci/list-images.yml
