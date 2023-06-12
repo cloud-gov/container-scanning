@@ -642,7 +642,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: late-cve-cleanup
     paths: ["ci/scan-container.sh",
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
@@ -668,7 +668,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: late-cve-cleanup
     paths: [terraform/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -676,7 +676,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
-    branch: main
+    branch: late-cve-cleanup
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: gsa-oracle-client
