@@ -1,5 +1,6 @@
 ---
 jobs:
+
 - name: configure-pipeline
   plan:
   - in_parallel:
@@ -80,6 +81,39 @@ jobs:
       FILE: concourse-task
       IMAGE: "((harden-concourse-task-repo))"
       AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
+  on_success:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for harden-concourse-task image scans"
+      body_text: "Here is the conmon results for harden-concourse-task"
+      attachment_globs: ["output/concourse-task.xml"]
+  on_failure:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for harden-concourse-task image scans - Failure"
+      body_text: "The pipeline to conmon-harden-concourse-task has failed! Please check me out *wink*"
+
+- name: conmon-harden-s3-resource-simple
+  plan:
+  - in_parallel: *common_resources
+  - get: image-source
+    params:
+      format: oci
+    resource: ecr-harden-s3-resource-simple
+  - get: grype-scan-ignore-config
+    trigger: false
+  - task: prep-email
+    file: scan-source/ci/conmon-scan-ecr-container.yml
+    params:
+      FILE: s3-resource-simple
+      IMAGE: "((harden-s3-resource-simple-repo))"
+      AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
+  on_success:
+    put: send-an-email
+    params:
+      subject_text: "ConMon Results for harden-s3-resource-simple image scans"
       REGISTRY: ((aws-ecr-registry))
   on_success:
     put: send-an-email
@@ -769,40 +803,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-sql-clients.json
-    region_name: us-gov-west-1
-
-- name: image-tags-harden-concourse-task
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-harden-concourse-task.json
-    region_name: us-gov-west-1
-
-- name: image-tags-harden-s3-resource-simple
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-harden-s3-resource-simple.json
-    region_name: us-gov-west-1
-
-- name: send-an-email
-  type: email-resource
-  source:
-    smtp:
-      host: ((smtp-host))
-      port: ((smtp-port))
-      username: ((smtp-cloudgovbilling.username))
-      password: ((smtp-cloudgovbilling.password))
-      ca_cert: ((smtp-cert.certificate))
-    from: ((smtp-email-from))
-    to: [((smtp-email-to))]
-
-- name: monthly
-  type: cron-resource
-  source:
-    expression: "0 6 22 * *"
-    location: "America/New_York"
+???
     fire_immediately: true
 
 - name: grype-scan-ignore-config
@@ -896,4 +897,3 @@ groups:
 - name: audit
   jobs:
   - audit-harden-concourse-task
-  - audit-harden-s3-resource-simple
