@@ -1057,6 +1057,40 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-sql-clients.json
+    region_name: us-gov-west-1
+
+- name: image-tags-harden-concourse-task
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-harden-concourse-task.json
+    region_name: us-gov-west-1
+
+- name: image-tags-harden-s3-resource-simple
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-harden-s3-resource-simple.json
+    region_name: us-gov-west-1
+
+- name: send-an-email
+  type: email-resource
+  source:
+    smtp:
+      host: ((smtp-host))
+      port: ((smtp-port))
+      username: ((smtp-cloudgovbilling.username))
+      password: ((smtp-cloudgovbilling.password))
+      ca_cert: ((smtp-cert.certificate))
+    from: ((smtp-email-from))
+    to: [((smtp-email-to))]
+
+- name: monthly
+  type: cron-resource
+  source:
+    expression: "0 6 22 * *"
+    location: "America/New_York"
     fire_immediately: true
 
 - name: grype-scan-ignore-config
