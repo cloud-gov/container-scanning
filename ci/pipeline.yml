@@ -182,34 +182,6 @@ jobs:
       subject_text: "ConMon Results for harden-concourse-task image scans - Failure"
       body_text: "The pipeline to conmon-harden-concourse-task has failed! Please check me out *wink*"
 
-- name: conmon-harden-s3-resource-simple
-  plan:
-  - in_parallel: *common_resources
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-harden-s3-resource-simple
-  - get: grype-scan-ignore-config
-    trigger: false
-  - task: prep-email
-    file: scan-source/ci/conmon-scan-ecr-container.yml
-    params:
-      FILE: s3-resource-simple
-      IMAGE: "((harden-s3-resource-simple-repo))"
-      AWS_DEFAULT_REGION: us-gov-west-1
-      REGISTRY: ((aws-ecr-registry))
-  on_success:
-    put: send-an-email
-    params:
-      subject_text: "ConMon Results for harden-s3-resource-simple image scans"
-      body_text: "Here is the conmon results for s3-resource-simple"
-      attachment_globs: ["output/s3-resource-simple.xml"]
-  on_failure:
-    put: send-an-email
-    params:
-      subject_text: "ConMon Results for harden-s3-resource-simple image scans - Failure"
-      body_text: "The pipeline to conmon-harden-s3-resource-simple has failed! Please check me out *wink*"
-
 - name: conmon-18fgsa-sql-clients
   plan:
   - in_parallel: *common_resources
@@ -1037,6 +1009,15 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
+- name: ecr-harden-s3-resource-simple-staging
+  type: registry-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: harden-s3-resource-simple-staging
+    aws_region: us-gov-west-1
+    semver_constraint: ">= 1.0.0"
+
 - name: ecr-harden-s3-resource-simple
   type: registry-image
   source:
@@ -1060,11 +1041,25 @@ resources:
     versioned_file: ecr/tags-sql-clients.json
     region_name: us-gov-west-1
 
+- name: image-tags-harden-concourse-task-staging
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-harden-concourse-task.json
+    region_name: us-gov-west-1
+
 - name: image-tags-harden-concourse-task
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
     versioned_file: ecr/tags-harden-concourse-task.json
+    region_name: us-gov-west-1
+
+- name: image-tags-harden-s3-resource-simple-staging
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket))
+    versioned_file: ecr/tags-harden-s3-resource-simple.json
     region_name: us-gov-west-1
 
 - name: image-tags-harden-s3-resource-simple
