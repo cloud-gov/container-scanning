@@ -69,31 +69,31 @@ jobs:
       subject_text: "Audit Results for harden-concourse-task image - Failure"
       body_text: "The pipeline to audit-harden-concourse-task has failed! Please check me out *wink*"
 
-- name: audit-harden-s3-resource-simple-tasking
+- name: audit-harden-s3-resource-simple-staging
   plan:
   - in_parallel: *common_resources
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-s3-resource-simple-tasking
+    resource: ecr-harden-s3-resource-simple-staging
   - load_var: latest-tag
     file: image-source/tag
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
-      image: harden-s3-resource-simple-tasking
+      image: harden-s3-resource-simple-staging
       tag: ((.:latest-tag))
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-s3-resource-simple-tasking image"
-      body_text: "Here are the audit results for harden-s3-resource-simple-tasking"
+      subject_text: "Audit Results for harden-s3-resource-simple-staging image"
+      body_text: "Here are the audit results for harden-s3-resource-simple-staging"
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-s3-resource-simple-tasking image - Failure"
-      body_text: "The pipeline to audit-harden-s3-resource-simple-tasking has failed! Please check me out *wink*"
+      subject_text: "Audit Results for harden-s3-resource-simple-staging image - Failure"
+      body_text: "The pipeline to audit-harden-s3-resource-simple-staging has failed! Please check me out *wink*"
 
 - name: audit-harden-s3-resource-simple
   plan:
@@ -348,13 +348,13 @@ jobs:
   - task: scan
     file: scan-source/ci/scan-ecr-container.yml
     params:
-      IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
+      IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   - task: check
     file: scan-source/ci/ecr-cve-check.yml
     params:
-      IMAGE: "((harden-s3-resource-simple-repo-staging)):((.:tag))"
+      IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
       IMAGENAME: "harden-s3-resource-simple-staging:((.:tag))"
     on_failure:
       put: slack
@@ -724,6 +724,60 @@ jobs:
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
+- name: scan-ecr-harden-concourse-task-staging
+  plan:
+  - in_parallel:
+    - get: image-tags-harden-concourse-task-staging
+      trigger: true
+    - get: weekly
+      trigger: true
+      passed: [scan-ecr-harden-concourse-task]
+    - get: scan-source
+      trigger: false
+      passed: [scan-ecr-harden-concourse-task]
+    - get: grype-scan-ignore-config
+      trigger: false
+    - get: gsa-concourse-task
+      params:
+        format: oci
+      resource: ecr-harden-concourse-task-staging
+  - load_var: tags
+    file: image-tags-harden-concourse-task-staging/tags-harden-concourse-task.json
+  - across:
+    - var: tag
+      values: ((.:tags))
+    do:
+    - task: scan
+      file: scan-source/ci/scan-ecr-container.yml
+      params:
+        IMAGE: "((harden-concourse-task-staging-repo)):((.:tag))"
+        AWS_DEFAULT_REGION: us-gov-west-1
+        REGISTRY: ((aws-ecr-registry))
+    - task: check
+      file: scan-source/ci/ecr-cve-check.yml
+      params:
+        IMAGE: "((harden-concourse-task-staging-repo)):((.:tag))"
+        IMAGENAME: "harden-concourse-task-staging:((.:tag))"
+      on_failure:
+        put: slack
+        params:
+          text:  |
+            :x: FAILED harden-concourse-task CVE check
+            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          channel: '#cg-platform-news'
+          username: ((username))
+          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+      on_success:
+        put: slack
+        params:
+          text_file: message/alert.txt
+          text: |
+            $TEXT_FILE_CONTENT
+            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          channel: '#cg-platform-news'
+          username: ((username))
+          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+
 - name: scan-ecr-harden-concourse-task
   plan:
   - in_parallel:
@@ -773,6 +827,50 @@ jobs:
           text_file: message/alert.txt
           text: |
             $TEXT_FILE_CONTENT
+            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          channel: '#cg-platform-news'
+          username: ((username))
+          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
+
+- name: scan-ecr-harden-s3-resource-simple-staging
+  plan:
+  - in_parallel:
+    - get: image-tags-harden-s3-resource-simple-staging
+      trigger: true
+    - get: weekly
+      trigger: true
+      passed: [scan-ecr-harden-s3-resource-simple]
+    - get: scan-source
+      trigger: false
+      passed: [scan-ecr-harden-s3-resource-simple]
+    - get: grype-scan-ignore-config
+      trigger: false
+    - get: gsa-concourse-task
+      params:
+        format: oci
+      resource: ecr-harden-s3-resource-simple-staging
+  - load_var: tags
+    file: image-tags-harden-s3-resource-simple-staging/tags-harden-s3-resource-simple-staging.json
+  - across:
+    - var: tag
+      values: ((.:tags))
+    do:
+    - task: scan
+      file: scan-source/ci/scan-ecr-container.yml
+      params:
+        IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
+        AWS_DEFAULT_REGION: us-gov-west-1
+        REGISTRY: ((aws-ecr-registry))
+    - task: check
+      file: scan-source/ci/ecr-cve-check.yml
+      params:
+        IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
+        IMAGENAME: "harden-s3-resource-simple-staging:((.:tag))"
+      on_failure:
+        put: slack
+        params:
+          text:  |
+            :x: FAILED harden-s3-resource-simple CVE check
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
           channel: '#cg-platform-news'
           username: ((username))
@@ -921,12 +1019,12 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: ecr-harden-concourse-task-staging
+- name: ecr-harden-concourse-task
   type: registry-image
   source:
     aws_access_key_id: ((aws-key))
     aws_secret_access_key: ((aws-secret))
-    repository: harden-concourse-task-staging
+    repository: harden-concourse-task
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
@@ -959,7 +1057,6 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-???
     fire_immediately: true
 
 - name: grype-scan-ignore-config
