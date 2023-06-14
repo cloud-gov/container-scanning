@@ -907,7 +907,8 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: create-staging-env
+      #main
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -950,8 +951,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
-    branch: create-staging-env
-      #main
+    branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: gsa-oracle-client
