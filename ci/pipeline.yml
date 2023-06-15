@@ -171,7 +171,6 @@ jobs:
       subject_text: "ConMon Results for harden-s3-resource-simple image scans"
       body_text: "Here is the conmon results for s3-resource-simple"
       attachment_globs: ["output/s3-resource-simple.xml"]
-      REGISTRY: ((aws-ecr-registry))
   on_failure:
     put: send-an-email
     params:
@@ -193,6 +192,7 @@ jobs:
       FILE: sql-clients
       IMAGE: "((sql-clients-repo))"
       AWS_DEFAULT_REGION: us-gov-west-1
+      REGISTRY: ((aws-ecr-registry))
   on_success:
     put: send-an-email
     params:
