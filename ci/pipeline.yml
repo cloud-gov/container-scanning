@@ -206,8 +206,6 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
-    - get: grype-scan-ignore-config
-      trigger: false
     - get: ecr-harden-concourse-task-staging
       params:
         format: oci
@@ -295,8 +293,6 @@ jobs:
     - get: weekly
       trigger: true
     - get: scan-source
-      trigger: false
-    - get: grype-scan-ignore-config
       trigger: false
     - get: ecr-harden-s3-resource-simple-staging
       params:
@@ -684,8 +680,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [scan-ecr-harden-concourse-task]
-    - get: grype-scan-ignore-config
-      trigger: false
     - get: gsa-concourse-task
       params:
         format: oci
@@ -790,8 +784,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [scan-ecr-harden-s3-resource-simple]
-    - get: grype-scan-ignore-config
-      trigger: false
     - get: gsa-concourse-task
       params:
         format: oci
