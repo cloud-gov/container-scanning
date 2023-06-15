@@ -174,8 +174,8 @@ jobs:
   on_failure:
     put: send-an-email
     params:
-      subject_text: "ConMon Results for harden-concourse-task image scans - Failure"
-      body_text: "The pipeline to conmon-harden-concourse-task has failed! Please check me out *wink*"
+      subject_text: "ConMon Results for harden-s3-resource-simple image scans - Failure"
+      body_text: "The pipeline to conmon-harden-s3-resource-simple has failed! Please check me out *wink*"
 
 - name: conmon-18fgsa-sql-clients
   plan:
