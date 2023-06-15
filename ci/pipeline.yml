@@ -169,13 +169,9 @@ jobs:
     put: send-an-email
     params:
       subject_text: "ConMon Results for harden-s3-resource-simple image scans"
+      body_text: "Here is the conmon results for s3-resource-simple"
+      attachment_globs: ["output/s3-resource-simple.xml"]
       REGISTRY: ((aws-ecr-registry))
-  on_success:
-    put: send-an-email
-    params:
-      subject_text: "ConMon Results for harden-concourse-task image scans"
-      body_text: "Here is the conmon results for harden-concourse-task"
-      attachment_globs: ["output/concourse-task.xml"]
   on_failure:
     put: send-an-email
     params:
@@ -197,7 +193,6 @@ jobs:
       FILE: sql-clients
       IMAGE: "((sql-clients-repo))"
       AWS_DEFAULT_REGION: us-gov-west-1
-      REGISTRY: ((aws-ecr-registry))
   on_success:
     put: send-an-email
     params:
@@ -907,8 +902,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: create-staging-env
-      #main
+    branch: main
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -1132,7 +1126,6 @@ groups:
   - audit-harden-concourse-task-staging
   - audit-harden-s3-resource-simple-staging
   - conmon-harden-concourse-task
-  - conmon-harden-concourse-task
   - conmon-harden-s3-resource-simple
   - conmon-18fgsa-sql-clients
   - scan-18fgsa-oracle-client
@@ -1187,3 +1180,4 @@ groups:
 - name: audit
   jobs:
   - audit-harden-concourse-task
+  - audit-harden-s3-resource-simple
