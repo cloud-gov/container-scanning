@@ -1131,6 +1131,8 @@ groups:
   - list-tags-sql-clients
   - list-tags-hardened-concourse-task
   - list-tags-hardened-s3-resource-simple
+  - list-tags-hardened-concourse-task-staging
+  - list-tags-hardened-s3-resource-simple-staging
   - scan-ecr-oracle-client
   - scan-ecr-sql-clients
   - scan-hardened-concourse-task-staging-image
@@ -1151,6 +1153,8 @@ groups:
   - list-tags-sql-clients
   - list-tags-hardened-concourse-task
   - list-tags-hardened-s3-resource-simple
+  - list-tags-hardened-concourse-task-staging
+  - list-tags-hardened-s3-resource-simple-staging
 - name: ecr-scan
   jobs:
   - scan-ecr-oracle-client
@@ -1166,6 +1170,8 @@ groups:
   - scan-latest-hardened-s3-resource-simple-image
   - list-tags-hardened-concourse-task
   - list-tags-hardened-s3-resource-simple
+  - list-tags-hardened-concourse-task-staging
+  - list-tags-hardened-s3-resource-simple-staging
   - scan-hardened-concourse-task-image
   - scan-hardened-s3-resource-simple-image
 - name: terraform
