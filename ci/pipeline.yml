@@ -716,12 +716,10 @@ jobs:
       trigger: true
     - get: weekly
       trigger: true
+      passed: [list-tags-hardened-concourse-task-staging]
     - get: scan-source
       trigger: false
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      resource: ecr-hardened-concourse-task-staging-repo
+      passed: [list-tags-hardened-concourse-task-staging]
   - load_var: tags
     file: image-tags-harden-concourse-task-staging/tags-harden-concourse-task.json
   - across:
@@ -816,8 +814,10 @@ jobs:
       trigger: true
     - get: weekly
       trigger: true
+      passed: [list-tags-hardened-s3-resource-simple-staging]
     - get: scan-source
       trigger: false
+      passed: [list-tags-hardened-s3-resource-simple-staging]
   - load_var: tags
     file: image-tags-harden-s3-resource-simple-staging/tags-harden-s3-resource-simple-staging.json
   - across:
@@ -857,10 +857,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-hardened-s3-resource-simple]
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      resource: ecr-harden-s3-resource-simple-repo
   - load_var: tags
     file: image-tags-harden-s3-resource-simple/tags-harden-s3-resource-simple.json
   - across:
