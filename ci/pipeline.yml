@@ -1010,7 +1010,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-harden-concourse-task.json
+    versioned_file: ecr/tags-harden-concourse-task-staging.json
     region_name: us-gov-west-1
 
 - name: image-tags-harden-concourse-task
@@ -1024,7 +1024,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-harden-s3-resource-simple.json
+    versioned_file: ecr/tags-harden-s3-resource-simple-staging.json
     region_name: us-gov-west-1
 
 - name: image-tags-harden-s3-resource-simple
