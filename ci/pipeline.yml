@@ -78,7 +78,7 @@ jobs:
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-s3-resource-simple-staging-repo
+    resource: ecr-hardened-s3-resource-simple-staging-repo
   - load_var: latest-tag
     file: image-source/tag
   - task: audit
@@ -304,12 +304,12 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
-    - get: ecr-harden-s3-resource-simple-staging-repo
+    - get: ecr-hardened-s3-resource-simple-staging-repo
       params:
         format: oci
       trigger: true
   - load_var: tag
-    file: ecr-harden-s3-resource-simple-staging-repo/tag
+    file: ecr-hardened-s3-resource-simple-staging-repo/tag
   - task: scan
     file: scan-source/ci/scan-ecr-container.yml
     params:
@@ -563,6 +563,22 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
+- name: list-tags-hardened-concourse-task-staging
+  plan:
+  - in_parallel:
+    - get: scan-source
+      passed: [scan-latest-hardened-concourse-task-staging-image]
+    - get: weekly
+      trigger: true
+    - get: ecr-hardened-concourse-task-staging-repo
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: harden-concourse-task-staging
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
 - name: list-tags-hardened-s3-resource-simple
   old_name: list-tags-harden-s3-resource-simple
   plan:
@@ -577,6 +593,22 @@ jobs:
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
       IMAGE_REPOSITORY: harden-s3-resource-simple
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
+- name: list-tags-hardened-s3-resource-simple-staging
+  plan:
+  - in_parallel:
+    - get: scan-source
+      passed: [scan-latest-hardened-s3-resource-simple-staging-image]
+    - get: weekly
+      trigger: true
+    - get: ecr-hardened-s3-resource-simple-staging-repo
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: harden-s3-resource-simple-staging
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
@@ -974,7 +1006,7 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: ecr-harden-s3-resource-simple-staging-repo
+- name: ecr-hardened-s3-resource-simple-staging-repo
   type: registry-image
   source:
     aws_access_key_id: ((aws-key))
