@@ -871,7 +871,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: fix-naming
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -879,7 +879,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: fix-naming
     paths: ["ci/scan-container.sh",
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
@@ -905,7 +905,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: fix-naming
     paths: [terraform/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -916,7 +916,7 @@ resources:
     branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: oracle-client-repo
+- name: oracle-client-docker-repo
   type: registry-image
   source:
     repository: 18fgsa/oracle-client
@@ -1143,4 +1143,4 @@ groups:
 - name: audit
   jobs:
   - audit-hardened-concourse-task-image
-  - audit-harden-s3-resource-simple-image
+  - audit-hardened-s3-resource-simple-image
