@@ -915,6 +915,8 @@ jobs:
       - name: ecr-hardened-s3-resource-simple-staging-repo
       outputs:
       - name: image
+      run:
+        path: build
 
 resources:
 - name: pipeline-source
