@@ -894,6 +894,34 @@ jobs:
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
+- name: upload-hardened-concourse-prod-image
+  plan:
+  - in_parallel:
+    - get: scan_source
+      passed: [scan-latest-hardened-concourse-task-staging-image]
+    - get: ecr-hardened-s3-resource-simple-staging-repo
+      passed: [scan-latest-hardened-concourse-task-staging-image]
+      params:
+        format: oci
+  - task: build-staging
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: ecr-hardened-s3-resource-simple-staging-repo
+      outputs:
+      - name: image
+#  - put: ecr-harden-concourse-task-prod-repo
+#    params:
+#      image: image/image.tar
+#      additional_tags: hardened-concourse-image-prod-version/version
+#  - put: hardened-concourse-image-prod-version
+#    params: {file: hardened-concourse-image-prod-version/version}
+
 resources:
 - name: pipeline-source
   type: git
@@ -1108,6 +1136,26 @@ resource_types:
   source:
     repository: 18fgsa/s3-resource-simple
 
+- name: ecr-harden-concourse-task-prod-repo
+  type: registry-image
+  source:
+    aws_access_key_id: ((aws-key))
+    aws_secret_access_key: ((aws-secret))
+    repository: harden-concourse-task
+    aws_region: us-gov-west-1
+    semver_constraint: ">= 1.0.0"
+
+- name: hardened-concourse-image-prod-version
+  type: semver
+  source:
+    driver: s3
+    bucket: {{semver-bucket}}
+    key: harden-concourse-docker-image-version
+    access_key_id: {{aws-access-key-id}}
+    secret_access_key: {{aws-secret-access-key}}
+    region_name: {{aws-region}}
+    initial_version: 1.0.0
+
 groups:
 - name: all
   jobs:
@@ -1139,6 +1187,7 @@ groups:
   - scan-hardened-s3-resource-simple-image
   - scan-latest-hardened-concourse-task-image
   - scan-latest-hardened-s3-resource-simple-image
+  - upload-hardened-concourse-prod-image
 - name: docker-scan
   jobs:
   - scan-oracle-client-docker-image
