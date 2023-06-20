@@ -900,7 +900,6 @@ jobs:
     - get: scan-source
       passed: [scan-latest-hardened-concourse-task-staging-image]
     - get: ecr-hardened-s3-resource-simple-staging-repo
-      passed: [scan-latest-hardened-concourse-task-staging-image]
       params:
         format: oci
   - task: build-staging
