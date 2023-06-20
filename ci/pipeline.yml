@@ -9,7 +9,8 @@ jobs:
   - set_pipeline: self
     file: pipeline-source/ci/pipeline.yml
 
-- name: audit-harden-concourse-task-staging
+- name: audit-hardened-concourse-task-staging-image
+  old_name: audit-harden-concourse-task-staging
   plan:
   - in_parallel: &common_resources
     - get: monthly
@@ -19,7 +20,7 @@ jobs:
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-concourse-task-staging
+    resource: ecr-hardened-concourse-task-staging-repo
   - load_var: latest-tag
     file: image-source/tag
   - task: audit
@@ -30,16 +31,17 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-concourse-task-staging image"
-      body_text: "Here are the audit results for harden-concourse-task-staging"
+      subject_text: "Audit Results for latest harden-concourse-task-staging image"
+      body_text: "Here are the audit results for the latest harden-concourse-task-staging"
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-concourse-task-staging image - Failure"
-      body_text: "The pipeline to audit-harden-concourse-task-staging has failed! Please check me out *wink*"
+      subject_text: "Audit Results for latest harden-concourse-task-staging image - Failure"
+      body_text: "The pipeline to audit the latest harden-concourse-task-staging image has failed! Please check me out *wink*"
 
-- name: audit-harden-concourse-task
+- name: audit-hardened-concourse-task-image
+  old_name: audit-harden-concourse-task
   plan:
   - in_parallel: &common_resources
     - get: monthly
@@ -49,7 +51,7 @@ jobs:
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-concourse-task
+    resource: ecr-harden-concourse-task-repo
   - load_var: latest-tag
     file: image-source/tag
   - task: audit
@@ -60,22 +62,23 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-concourse-task image"
-      body_text: "Here are the audit results for harden-concourse-task"
+      subject_text: "Audit Results for latest harden-concourse-task image"
+      body_text: "Here are the audit results for the latest harden-concourse-task"
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-concourse-task image - Failure"
-      body_text: "The pipeline to audit-harden-concourse-task has failed! Please check me out *wink*"
+      subject_text: "Audit Results for latest harden-concourse-task image - Failure"
+      body_text: "The pipeline to audit the latest harden-concourse-task image has failed! Please check me out *wink*"
 
-- name: audit-harden-s3-resource-simple-staging
+- name: audit-hardened-s3-resource-simple-staging-image
+  old_name: audit-harden-s3-resource-simple-staging
   plan:
   - in_parallel: *common_resources
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-s3-resource-simple-staging
+    resource: ecr-hardened-s3-resource-simple-staging-repo
   - load_var: latest-tag
     file: image-source/tag
   - task: audit
@@ -86,22 +89,23 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-s3-resource-simple-staging image"
-      body_text: "Here are the audit results for harden-s3-resource-simple-staging"
+      subject_text: "Audit Results for latest harden-s3-resource-simple-staging image"
+      body_text: "Here are the audit results for the latest harden-s3-resource-simple-staging image"
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-s3-resource-simple-staging image - Failure"
-      body_text: "The pipeline to audit-harden-s3-resource-simple-staging has failed! Please check me out *wink*"
+      subject_text: "Audit Results for the latest harden-s3-resource-simple-staging image - Failure"
+      body_text: "The pipeline to audit the latest harden-s3-resource-simple-staging image has failed! Please check me out *wink*"
 
-- name: audit-harden-s3-resource-simple
+- name: audit-hardened-s3-resource-simple-image
+  old_name: audit-harden-s3-resource-simple
   plan:
   - in_parallel: *common_resources
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-s3-resource-simple
+    resource: ecr-harden-s3-resource-simple-repo
   - load_var: latest-tag
     file: image-source/tag
   - task: audit
@@ -112,22 +116,23 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-s3-resource-simple image"
-      body_text: "Here are the audit results for harden-s3-resource-simple"
+      subject_text: "Audit Results for latest harden-s3-resource-simple image"
+      body_text: "Here are the audit results for the latest harden-s3-resource-simple image"
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
       subject_text: "Audit Results for harden-s3-resource-simple image - Failure"
-      body_text: "The pipeline to audit-harden-s3-resource-simple has failed! Please check me out *wink*"
+      body_text: "The pipeline to audit the harden-s3-resource-simple image has failed! Please check me out *wink*"
 
-- name: conmon-harden-concourse-task
+- name: conmon-hardened-concourse-task-image
+  old_name: conmon-harden-concourse-task
   plan:
   - in_parallel: *common_resources
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-concourse-task
+    resource: ecr-harden-concourse-task-repo
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -145,15 +150,16 @@ jobs:
     put: send-an-email
     params:
       subject_text: "ConMon Results for harden-concourse-task image scans - Failure"
-      body_text: "The pipeline to conmon-harden-concourse-task has failed! Please check me out *wink*"
+      body_text: "The pipeline for conmon-hardened-concourse-task-image has failed! Please check me out *wink*"
 
-- name: conmon-harden-s3-resource-simple
+- name: conmon-hardened-s3-resource-simple-image
+  old_name: conmon-harden-s3-resource-simple
   plan:
   - in_parallel: *common_resources
   - get: image-source
     params:
       format: oci
-    resource: ecr-harden-s3-resource-simple
+    resource: ecr-harden-s3-resource-simple-repo
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
     params:
@@ -171,9 +177,10 @@ jobs:
     put: send-an-email
     params:
       subject_text: "ConMon Results for harden-s3-resource-simple image scans - Failure"
-      body_text: "The pipeline to conmon-harden-s3-resource-simple has failed! Please check me out *wink*"
+      body_text: "The pipeline for conmon-hardened-s3-resource-simple-image has failed! Please check me out *wink*"
 
-- name: conmon-18fgsa-sql-clients
+- name: conmon-18fgsa-sql-clients-image
+  old_name: conmon-18fgsa-sql-clients
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -197,21 +204,22 @@ jobs:
     put: send-an-email
     params:
       subject_text: "ConMon Results for sql-clients image scans - Failure"
-      body_text: "The pipeline to conmon-18fgsa-sql-clients has failed! Please check me out *wink*"
+      body_text: "The pipeline for conmon-18fgsa-sql-clients-image has failed! Please check me out *wink*"
 
-- name: scan-latest-harden-concourse-task-image-staging
+- name: scan-latest-hardened-concourse-task-staging-image
+  old_name: scan-latest-harden-concourse-task-image-staging
   plan:
   - in_parallel:
     - get: weekly
       trigger: true
     - get: scan-source
       trigger: false
-    - get: ecr-harden-concourse-task-staging
+    - get: ecr-hardened-concourse-task-staging-repo
       params:
         format: oci
       trigger: true
   - load_var: tag
-    file: ecr-harden-concourse-task-staging/tag
+    file: ecr-hardened-concourse-task-staging-repo/tag
   - task: scan
     file: scan-source/ci/scan-ecr-container.yml
     params:
@@ -243,19 +251,20 @@ jobs:
         username: ((username))
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-latest-harden-concourse-task-image
+- name: scan-latest-hardened-concourse-task-image
+  old_name: scan-latest-harden-concourse-task-image
   plan:
   - in_parallel:
     - get: weekly
       trigger: true
     - get: scan-source
       trigger: false
-    - get: ecr-harden-concourse-task
+    - get: ecr-harden-concourse-task-repo
       params:
         format: oci
       trigger: true
   - load_var: tag
-    file: ecr-harden-concourse-task/tag
+    file: ecr-harden-concourse-task-repo/tag
   - task: scan
     file: scan-source/ci/scan-ecr-container.yml
     params:
@@ -287,19 +296,20 @@ jobs:
         username: ((username))
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-latest-harden-s3-resource-simple-image-staging
+- name: scan-latest-hardened-s3-resource-simple-staging-image
+  old_name: scan-latest-harden-s3-resource-simple-image-staging
   plan:
   - in_parallel:
     - get: weekly
       trigger: true
     - get: scan-source
       trigger: false
-    - get: ecr-harden-s3-resource-simple-staging
+    - get: ecr-hardened-s3-resource-simple-staging-repo
       params:
         format: oci
       trigger: true
   - load_var: tag
-    file: ecr-harden-s3-resource-simple-staging/tag
+    file: ecr-hardened-s3-resource-simple-staging-repo/tag
   - task: scan
     file: scan-source/ci/scan-ecr-container.yml
     params:
@@ -331,19 +341,20 @@ jobs:
         username: ((username))
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-latest-harden-s3-resource-simple-image
+- name: scan-latest-hardened-s3-resource-simple-image
+  old_name: scan-latest-harden-s3-resource-simple-image
   plan:
   - in_parallel:
     - get: weekly
       trigger: true
     - get: scan-source
       trigger: false
-    - get: ecr-harden-s3-resource-simple
+    - get: ecr-harden-s3-resource-simple-repo
       params:
         format: oci
       trigger: true
   - load_var: tag
-    file: ecr-harden-s3-resource-simple/tag
+    file: ecr-harden-s3-resource-simple-repo/tag
   - task: scan
     file: scan-source/ci/scan-ecr-container.yml
     params:
@@ -375,12 +386,13 @@ jobs:
         username: ((username))
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-18fgsa-oracle-client
+- name: scan-oracle-client-docker-image
+  old_name: scan-18fgsa-oracle-client
   plan:
   - in_parallel:
     - get: weekly
       trigger: true
-    - get: gsa-oracle-client
+    - get: oracle-client-docker-repo
       params:
         format: oci
       trigger: true
@@ -396,8 +408,8 @@ jobs:
       IMAGE: 18fgsa/oracle-client
   - put: ecr-oracle-client
     params:
-      image: gsa-oracle-client/image.tar
-      additional_tags: gsa-oracle-client/tag
+      image: oracle-client-docker-repo/image.tar
+      additional_tags: oracle-client-docker-repo/tag
   on_failure:
     put: slack
     params:
@@ -418,12 +430,13 @@ jobs:
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-18fgsa-sql-clients
+- name: scan-sql-clients-docker-image
+  old_name: scan-18fgsa-sql-clients
   plan:
   - in_parallel:
     - get: weekly
       trigger: true
-    - get: gsa-sql-clients
+    - get: sql-clients-docker-repo
       params:
         format: oci
       trigger: true
@@ -439,8 +452,8 @@ jobs:
       IMAGE: 18fgsa/sql-clients
   - put: ecr-sql-clients
     params:
-      image: gsa-sql-clients/image.tar
-      additional_tags: gsa-sql-clients/tag
+      image: sql-clients-docker-repo/image.tar
+      additional_tags: sql-clients-docker-repo/tag
   on_failure:
     put: slack
     params:
@@ -507,7 +520,7 @@ jobs:
   plan:
   - in_parallel:
     - get: scan-source
-      passed: [scan-18fgsa-oracle-client]
+      passed: [scan-oracle-client-docker-image]
     - get: weekly
       trigger: true
   - task: list-images
@@ -522,7 +535,7 @@ jobs:
   plan:
   - in_parallel:
     - get: scan-source
-      passed: [scan-18fgsa-sql-clients]
+      passed: [scan-sql-clients-docker-image]
     - get: weekly
       trigger: true
   - task: list-images
@@ -533,14 +546,15 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
-- name: list-tags-harden-concourse-task
+- name: list-tags-hardened-concourse-task
+  old_name: list-tags-harden-concourse-task
   plan:
   - in_parallel:
     - get: scan-source
-      passed: [scan-latest-harden-concourse-task-image]
+      passed: [scan-latest-hardened-concourse-task-image]
     - get: weekly
       trigger: true
-    - get: ecr-harden-concourse-task
+    - get: ecr-harden-concourse-task-repo
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
@@ -549,19 +563,52 @@ jobs:
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
-- name: list-tags-harden-s3-resource-simple
+- name: list-tags-hardened-concourse-task-staging
   plan:
   - in_parallel:
     - get: scan-source
-      passed: [scan-latest-harden-s3-resource-simple-image]
+      passed: [scan-latest-hardened-concourse-task-staging-image]
     - get: weekly
       trigger: true
-    - get: ecr-harden-s3-resource-simple
+    - get: ecr-hardened-concourse-task-staging-repo
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: harden-concourse-task-staging
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
+- name: list-tags-hardened-s3-resource-simple
+  old_name: list-tags-harden-s3-resource-simple
+  plan:
+  - in_parallel:
+    - get: scan-source
+      passed: [scan-latest-hardened-s3-resource-simple-image]
+    - get: weekly
+      trigger: true
+    - get: ecr-harden-s3-resource-simple-repo
   - task: list-images
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
       IMAGE_REPOSITORY: harden-s3-resource-simple
+      S3_TFSTATE_BUCKET: ((tf-state-bucket))
+      STACK_NAME: ecr
+
+- name: list-tags-hardened-s3-resource-simple-staging
+  plan:
+  - in_parallel:
+    - get: scan-source
+      passed: [scan-latest-hardened-s3-resource-simple-staging-image]
+    - get: weekly
+      trigger: true
+    - get: ecr-hardened-s3-resource-simple-staging-repo
+  - task: list-images
+    file: scan-source/ci/list-images.yml
+    params:
+      AWS_DEFAULT_REGION: us-gov-west-1
+      IMAGE_REPOSITORY: harden-s3-resource-simple-staging
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
 
@@ -576,10 +623,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-oracle-client]
-    - get: gsa-oracle-client
-      params:
-        format: oci
-      resource: ecr-oracle-client
   - load_var: tags
     file: image-tags-oracle-client/tags-oracle-client.json
   - across:
@@ -628,10 +671,6 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-sql-clients]
-    - get: gsa-sql-clients
-      params:
-        format: oci
-      resource: ecr-sql-clients
   - load_var: tags
     file: image-tags-sql-clients/tags-sql-clients.json
   - across:
@@ -669,21 +708,18 @@ jobs:
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-ecr-harden-concourse-task-staging
+- name: scan-hardened-concourse-task-staging-image
+  old_name: scan-ecr-harden-concourse-task-staging
   plan:
   - in_parallel:
     - get: image-tags-harden-concourse-task-staging
       trigger: true
     - get: weekly
       trigger: true
-      passed: [scan-ecr-harden-concourse-task]
+      passed: [list-tags-hardened-concourse-task-staging]
     - get: scan-source
       trigger: false
-      passed: [scan-ecr-harden-concourse-task]
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      resource: ecr-harden-concourse-task-staging
+      passed: [list-tags-hardened-concourse-task-staging]
   - load_var: tags
     file: image-tags-harden-concourse-task-staging/tags-harden-concourse-task.json
   - across:
@@ -721,21 +757,18 @@ jobs:
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-ecr-harden-concourse-task
+- name: scan-hardened-concourse-task-image
+  old_name: scan-ecr-harden-concourse-task
   plan:
   - in_parallel:
     - get: image-tags-harden-concourse-task
       trigger: true
     - get: weekly
       trigger: true
-      passed: [list-tags-harden-concourse-task]
+      passed: [list-tags-hardened-concourse-task]
     - get: scan-source
       trigger: false
-      passed: [list-tags-harden-concourse-task]
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      resource: ecr-harden-concourse-task
+      passed: [list-tags-hardened-concourse-task]
   - load_var: tags
     file: image-tags-harden-concourse-task/tags-harden-concourse-task.json
   - across:
@@ -773,21 +806,18 @@ jobs:
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-ecr-harden-s3-resource-simple-staging
+- name: scan-hardened-s3-resource-simple-staging-image
+  old_name: scan-ecr-harden-s3-resource-simple-staging
   plan:
   - in_parallel:
     - get: image-tags-harden-s3-resource-simple-staging
       trigger: true
     - get: weekly
       trigger: true
-      passed: [scan-ecr-harden-s3-resource-simple]
+      passed: [list-tags-hardened-s3-resource-simple-staging]
     - get: scan-source
       trigger: false
-      passed: [scan-ecr-harden-s3-resource-simple]
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      resource: ecr-harden-s3-resource-simple-staging
+      passed: [list-tags-hardened-s3-resource-simple-staging]
   - load_var: tags
     file: image-tags-harden-s3-resource-simple-staging/tags-harden-s3-resource-simple-staging.json
   - across:
@@ -815,21 +845,18 @@ jobs:
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-ecr-harden-s3-resource-simple
+- name: scan-hardened-s3-resource-simple-image
+  old_name: scan-ecr-harden-s3-resource-simple
   plan:
   - in_parallel:
     - get: image-tags-harden-s3-resource-simple
       trigger: true
     - get: weekly
       trigger: true
-      passed: [list-tags-harden-s3-resource-simple]
+      passed: [list-tags-hardened-s3-resource-simple]
     - get: scan-source
       trigger: false
-      passed: [list-tags-harden-s3-resource-simple]
-    - get: gsa-concourse-task
-      params:
-        format: oci
-      resource: ecr-harden-s3-resource-simple
+      passed: [list-tags-hardened-s3-resource-simple]
   - load_var: tags
     file: image-tags-harden-s3-resource-simple/tags-harden-s3-resource-simple.json
   - across:
@@ -917,13 +944,13 @@ resources:
     branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: gsa-oracle-client
+- name: oracle-client-docker-repo
   type: registry-image
   source:
     repository: 18fgsa/oracle-client
     semver_constraint: ">= 1.0.0"
 
-- name: gsa-sql-clients
+- name: sql-clients-docker-repo
   type: registry-image
   source:
     repository: 18fgsa/sql-clients
@@ -957,7 +984,7 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: ecr-harden-concourse-task
+- name: ecr-harden-concourse-task-repo
   type: registry-image
   source:
     aws_access_key_id: ((aws-key))
@@ -966,7 +993,7 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: ecr-harden-concourse-task-staging
+- name: ecr-hardened-concourse-task-staging-repo
   type: registry-image
   source:
     aws_access_key_id: ((aws-key))
@@ -975,7 +1002,7 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: ecr-harden-s3-resource-simple-staging
+- name: ecr-hardened-s3-resource-simple-staging-repo
   type: registry-image
   source:
     aws_access_key_id: ((aws-key))
@@ -984,7 +1011,7 @@ resources:
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
 
-- name: ecr-harden-s3-resource-simple
+- name: ecr-harden-s3-resource-simple-repo
   type: registry-image
   source:
     aws_access_key_id: ((aws-key))
@@ -1011,7 +1038,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-harden-concourse-task.json
+    versioned_file: ecr/tags-harden-concourse-task-staging.json
     region_name: us-gov-west-1
 
 - name: image-tags-harden-concourse-task
@@ -1025,7 +1052,7 @@ resources:
   type: s3-iam
   source:
     bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-harden-s3-resource-simple.json
+    versioned_file: ecr/tags-harden-s3-resource-simple-staging.json
     region_name: us-gov-west-1
 
 - name: image-tags-harden-s3-resource-simple
@@ -1085,63 +1112,69 @@ groups:
 - name: all
   jobs:
   - configure-pipeline
-  - audit-harden-concourse-task
-  - audit-harden-s3-resource-simple
-  - audit-harden-concourse-task-staging
-  - audit-harden-s3-resource-simple-staging
-  - conmon-harden-concourse-task
-  - conmon-harden-s3-resource-simple
-  - conmon-18fgsa-sql-clients
-  - scan-18fgsa-oracle-client
-  - scan-18fgsa-sql-clients
+  - audit-hardened-concourse-task-image
+  - audit-hardened-s3-resource-simple-image
+  - audit-hardened-concourse-task-staging-image
+  - audit-hardened-s3-resource-simple-staging-image
+  - conmon-hardened-concourse-task-image
+  - conmon-hardened-s3-resource-simple-image
+  - conmon-18fgsa-sql-clients-image
+  - scan-oracle-client-docker-image
+  - scan-sql-clients-docker-image
   - terraform-plan-ecr
   - terraform-apply-ecr
   - list-tags-oracle-client
   - list-tags-sql-clients
-  - list-tags-harden-concourse-task
-  - list-tags-harden-s3-resource-simple
+  - list-tags-hardened-concourse-task
+  - list-tags-hardened-s3-resource-simple
+  - list-tags-hardened-concourse-task-staging
+  - list-tags-hardened-s3-resource-simple-staging
   - scan-ecr-oracle-client
   - scan-ecr-sql-clients
-  - scan-ecr-harden-concourse-task-staging
-  - scan-ecr-harden-s3-resource-simple-staging
-  - scan-latest-harden-concourse-task-image-staging
-  - scan-latest-harden-s3-resource-simple-image-staging
-  - scan-ecr-harden-concourse-task
-  - scan-ecr-harden-s3-resource-simple
-  - scan-latest-harden-concourse-task-image
-  - scan-latest-harden-s3-resource-simple-image
+  - scan-hardened-concourse-task-staging-image
+  - scan-hardened-s3-resource-simple-staging-image
+  - scan-latest-hardened-concourse-task-staging-image
+  - scan-latest-hardened-s3-resource-simple-staging-image
+  - scan-hardened-concourse-task-image
+  - scan-hardened-s3-resource-simple-image
+  - scan-latest-hardened-concourse-task-image
+  - scan-latest-hardened-s3-resource-simple-image
 - name: docker-scan
   jobs:
-  - scan-18fgsa-oracle-client
-  - scan-18fgsa-sql-clients
+  - scan-oracle-client-docker-image
+  - scan-sql-clients-docker-image
 - name: tags
   jobs:
   - list-tags-oracle-client
   - list-tags-sql-clients
-  - list-tags-harden-concourse-task
-  - list-tags-harden-s3-resource-simple
+  - list-tags-hardened-concourse-task
+  - list-tags-hardened-s3-resource-simple
+  - list-tags-hardened-concourse-task-staging
+  - list-tags-hardened-s3-resource-simple-staging
 - name: ecr-scan
   jobs:
   - scan-ecr-oracle-client
   - scan-ecr-sql-clients
 - name: conmon-scan
   jobs:
-  - conmon-harden-concourse-task
-  - conmon-harden-s3-resource-simple
-  - conmon-18fgsa-sql-clients
+  - conmon-hardened-concourse-task-image
+  - conmon-hardened-s3-resource-simple-image
+  - conmon-18fgsa-sql-clients-image
 - name: hardened-scan
   jobs:
-  - scan-latest-harden-concourse-task-image
-  - scan-latest-harden-s3-resource-simple-image
-  - list-tags-harden-concourse-task
-  - list-tags-harden-s3-resource-simple
-  - scan-ecr-harden-concourse-task
-  - scan-ecr-harden-s3-resource-simple
+  - scan-latest-hardened-concourse-task-image
+  - scan-latest-hardened-s3-resource-simple-image
+  - list-tags-hardened-concourse-task
+  - list-tags-hardened-s3-resource-simple
+  - list-tags-hardened-concourse-task-staging
+  - list-tags-hardened-s3-resource-simple-staging
+  - scan-hardened-concourse-task-image
+  - scan-hardened-s3-resource-simple-image
 - name: terraform
   jobs:
   - terraform-plan-ecr
   - terraform-apply-ecr
 - name: audit
   jobs:
-  - audit-harden-concourse-task
-  - audit-harden-s3-resource-simple
+  - audit-hardened-concourse-task-image
+  - audit-hardened-s3-resource-simple-image
