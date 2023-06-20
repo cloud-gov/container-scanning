@@ -915,12 +915,6 @@ jobs:
       - name: ecr-hardened-s3-resource-simple-staging-repo
       outputs:
       - name: image
-#  - put: ecr-harden-concourse-task-prod-repo
-#    params:
-#      image: image/image.tar
-#      additional_tags: hardened-concourse-image-prod-version/version
-#  - put: hardened-concourse-image-prod-version
-#    params: {file: hardened-concourse-image-prod-version/version}
 
 resources:
 - name: pipeline-source
