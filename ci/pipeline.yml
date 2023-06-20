@@ -897,7 +897,7 @@ jobs:
 - name: upload-hardened-concourse-prod-image
   plan:
   - in_parallel:
-    - get: scan_source
+    - get: scan-source
       passed: [scan-latest-hardened-concourse-task-staging-image]
     - get: ecr-hardened-s3-resource-simple-staging-repo
       passed: [scan-latest-hardened-concourse-task-staging-image]
