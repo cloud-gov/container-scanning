@@ -1143,11 +1143,11 @@ resource_types:
   type: semver
   source:
     driver: s3
-    bucket: {{semver-bucket}}
+    bucket: ((semver-bucket))
     key: harden-concourse-docker-image-version
-    access_key_id: {{aws-access-key-id}}
-    secret_access_key: {{aws-secret-access-key}}
-    region_name: {{aws-region}}
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
+    region_name: ((aws-region))
     initial_version: 1.0.0
 
 groups:
