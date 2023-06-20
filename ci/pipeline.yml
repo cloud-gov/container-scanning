@@ -899,14 +899,14 @@ jobs:
   - in_parallel:
     - get: scan-source
       passed: [scan-latest-hardened-concourse-task-staging-image]
-    - get: ecr-hardened-s3-resource-simple-staging-repo
+    - get: ecr-hardened-concourse-task-staging-repo
       params:
         format: oci
     - get: hardened-concourse-image-prod-version
       params: {bump: patch}
   - put: ecr-harden-concourse-task-prod-repo
     params:
-      image: ecr-hardened-s3-resource-simple-staging-repo/image.tar
+      image: ecr-hardened-concourse-task-staging-repo/image.tar
       additional_tags: hardened-concourse-image-prod-version/version
   - put: hardened-concourse-image-prod-version
     params: {file: hardened-concourse-image-prod-version/version}
