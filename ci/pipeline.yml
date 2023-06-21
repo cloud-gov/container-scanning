@@ -251,51 +251,6 @@ jobs:
         username: ((username))
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-latest-hardened-concourse-task-image
-  old_name: scan-latest-harden-concourse-task-image
-  plan:
-  - in_parallel:
-    - get: weekly
-      trigger: true
-    - get: scan-source
-      trigger: false
-    - get: ecr-harden-concourse-task-repo
-      params:
-        format: oci
-      trigger: true
-  - load_var: tag
-    file: ecr-harden-concourse-task-repo/tag
-  - task: scan
-    file: scan-source/ci/scan-ecr-container.yml
-    params:
-      IMAGE: "((harden-concourse-task-repo)):((.:tag))"
-      AWS_DEFAULT_REGION: us-gov-west-1
-      REGISTRY: ((aws-ecr-registry))
-  - task: check
-    file: scan-source/ci/ecr-cve-check.yml
-    params:
-      IMAGE: "((harden-concourse-task-repo)):((.:tag))"
-      IMAGENAME: "harden-concourse-task:((.:tag))"
-    on_failure:
-      put: slack
-      params:
-        text:  |
-          :x: FAILED harden-concourse-task CVE check
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-        channel: '#cg-platform-news'
-        username: ((username))
-        icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-    on_success:
-      put: slack
-      params:
-        text_file: message/alert.txt
-        text: |
-          $TEXT_FILE_CONTENT
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-        channel: '#cg-platform-news'
-        username: ((username))
-        icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-
 - name: scan-latest-hardened-s3-resource-simple-staging-image
   old_name: scan-latest-harden-s3-resource-simple-image-staging
   plan:
@@ -551,7 +506,7 @@ jobs:
   plan:
   - in_parallel:
     - get: scan-source
-      passed: [scan-latest-hardened-concourse-task-image]
+      passed: [upload-hardened-concourse-task-prod-image]
     - get: weekly
       trigger: true
     - get: ecr-harden-concourse-task-repo
@@ -894,7 +849,7 @@ jobs:
           username: ((username))
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: upload-hardened-concourse-prod-image
+- name: upload-hardened-concourse-task-prod-image
   plan:
   - get: scan-source
     passed: [scan-latest-hardened-concourse-task-staging-image]
@@ -1166,7 +1121,6 @@ groups:
   - scan-latest-hardened-s3-resource-simple-staging-image
   - scan-hardened-concourse-task-image
   - scan-hardened-s3-resource-simple-image
-  - scan-latest-hardened-concourse-task-image
   - scan-latest-hardened-s3-resource-simple-image
   - upload-hardened-concourse-prod-image
 - name: docker-scan
@@ -1192,7 +1146,7 @@ groups:
   - conmon-18fgsa-sql-clients-image
 - name: hardened-scan
   jobs:
-  - scan-latest-hardened-concourse-task-image
+  - scan-latest-hardened-concourse-task-staging-image
   - scan-latest-hardened-s3-resource-simple-image
   - list-tags-hardened-concourse-task
   - list-tags-hardened-s3-resource-simple
