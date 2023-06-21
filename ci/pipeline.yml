@@ -1122,7 +1122,7 @@ groups:
   - scan-hardened-concourse-task-image
   - scan-hardened-s3-resource-simple-image
   - scan-latest-hardened-s3-resource-simple-image
-  - upload-hardened-concourse-prod-image
+  - upload-hardened-concourse-task-prod-image
 - name: docker-scan
   jobs:
   - scan-oracle-client-docker-image
