@@ -10,7 +10,6 @@ jobs:
     file: pipeline-source/ci/pipeline.yml
 
 - name: audit-hardened-concourse-task-staging-image
-  old_name: audit-harden-concourse-task-staging
   plan:
   - in_parallel: &common_resources
     - get: monthly
@@ -41,7 +40,6 @@ jobs:
       body_text: "The pipeline to audit the latest harden-concourse-task-staging image has failed! Please check me out *wink*"
 
 - name: audit-hardened-s3-resource-simple-staging-image
-  old_name: audit-harden-s3-resource-simple-staging
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -68,7 +66,6 @@ jobs:
       body_text: "The pipeline to audit the latest harden-s3-resource-simple-staging image has failed! Please check me out *wink*"
 
 - name: conmon-hardened-concourse-task-image
-  old_name: conmon-harden-concourse-task
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -95,7 +92,6 @@ jobs:
       body_text: "The pipeline for conmon-hardened-concourse-task-image has failed! Please check me out *wink*"
 
 - name: conmon-hardened-s3-resource-simple-image
-  old_name: conmon-harden-s3-resource-simple
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -122,7 +118,6 @@ jobs:
       body_text: "The pipeline for conmon-hardened-s3-resource-simple-image has failed! Please check me out *wink*"
 
 - name: conmon-18fgsa-sql-clients-image
-  old_name: conmon-18fgsa-sql-clients
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -149,7 +144,6 @@ jobs:
       body_text: "The pipeline for conmon-18fgsa-sql-clients-image has failed! Please check me out *wink*"
 
 - name: scan-latest-hardened-concourse-task-staging-image
-  old_name: scan-latest-harden-concourse-task-image-staging
   plan:
   - in_parallel:
     - get: weekly
@@ -194,7 +188,6 @@ jobs:
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-latest-hardened-s3-resource-simple-staging-image
-  old_name: scan-latest-harden-s3-resource-simple-image-staging
   plan:
   - in_parallel:
     - get: weekly
@@ -239,7 +232,6 @@ jobs:
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-oracle-client-docker-image
-  old_name: scan-18fgsa-oracle-client
   plan:
   - in_parallel:
     - get: weekly
@@ -283,7 +275,6 @@ jobs:
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-sql-clients-docker-image
-  old_name: scan-18fgsa-sql-clients
   plan:
   - in_parallel:
     - get: weekly
@@ -399,7 +390,6 @@ jobs:
       STACK_NAME: ecr
 
 - name: list-tags-hardened-concourse-task
-  old_name: list-tags-harden-concourse-task
   plan:
   - in_parallel:
     - get: scan-source
@@ -432,7 +422,6 @@ jobs:
       STACK_NAME: ecr
 
 - name: list-tags-hardened-s3-resource-simple
-  old_name: list-tags-harden-s3-resource-simple
   plan:
   - in_parallel:
     - get: scan-source
@@ -561,7 +550,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-concourse-task-staging-image
-  old_name: scan-ecr-harden-concourse-task-staging
   plan:
   - in_parallel:
     - get: image-tags-harden-concourse-task-staging
@@ -610,7 +598,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-concourse-task-image
-  old_name: scan-ecr-harden-concourse-task
   plan:
   - in_parallel:
     - get: image-tags-harden-concourse-task
@@ -659,7 +646,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-s3-resource-simple-staging-image
-  old_name: scan-ecr-harden-s3-resource-simple-staging
   plan:
   - in_parallel:
     - get: image-tags-harden-s3-resource-simple-staging
@@ -698,7 +684,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-s3-resource-simple-image
-  old_name: scan-ecr-harden-s3-resource-simple
   plan:
   - in_parallel:
     - get: image-tags-harden-s3-resource-simple
