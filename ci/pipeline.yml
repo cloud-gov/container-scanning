@@ -40,37 +40,6 @@ jobs:
       subject_text: "Audit Results for latest harden-concourse-task-staging image - Failure"
       body_text: "The pipeline to audit the latest harden-concourse-task-staging image has failed! Please check me out *wink*"
 
-- name: audit-hardened-concourse-task-image
-  old_name: audit-harden-concourse-task
-  plan:
-  - in_parallel: &common_resources
-    - get: monthly
-      trigger: true
-    - get: scan-source
-      trigger: false
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-harden-concourse-task-repo
-  - load_var: latest-tag
-    file: image-source/tag
-  - task: audit
-    file: scan-source/ci/audit-ecr-container.yml
-    vars:
-      image: harden-concourse-task
-      tag: ((.:latest-tag))
-  on_success:
-    put: send-an-email
-    params:
-      subject_text: "Audit Results for latest harden-concourse-task image"
-      body_text: "Here are the audit results for the latest harden-concourse-task"
-      attachment_globs: ["audit/cis-audit.html"]
-  on_failure:
-    put: send-an-email
-    params:
-      subject_text: "Audit Results for latest harden-concourse-task image - Failure"
-      body_text: "The pipeline to audit the latest harden-concourse-task image has failed! Please check me out *wink*"
-
 - name: audit-hardened-s3-resource-simple-staging-image
   old_name: audit-harden-s3-resource-simple-staging
   plan:
@@ -97,33 +66,6 @@ jobs:
     params:
       subject_text: "Audit Results for the latest harden-s3-resource-simple-staging image - Failure"
       body_text: "The pipeline to audit the latest harden-s3-resource-simple-staging image has failed! Please check me out *wink*"
-
-- name: audit-hardened-s3-resource-simple-image
-  old_name: audit-harden-s3-resource-simple
-  plan:
-  - in_parallel: *common_resources
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-harden-s3-resource-simple-repo
-  - load_var: latest-tag
-    file: image-source/tag
-  - task: audit
-    file: scan-source/ci/audit-ecr-container.yml
-    vars:
-      image: harden-s3-resource-simple
-      tag: ((.:latest-tag))
-  on_success:
-    put: send-an-email
-    params:
-      subject_text: "Audit Results for latest harden-s3-resource-simple image"
-      body_text: "Here are the audit results for the latest harden-s3-resource-simple image"
-      attachment_globs: ["audit/cis-audit.html"]
-  on_failure:
-    put: send-an-email
-    params:
-      subject_text: "Audit Results for harden-s3-resource-simple image - Failure"
-      body_text: "The pipeline to audit the harden-s3-resource-simple image has failed! Please check me out *wink*"
 
 - name: conmon-hardened-concourse-task-image
   old_name: conmon-harden-concourse-task
@@ -812,7 +754,7 @@ jobs:
       params:
         format: oci
       resource: ecr-hardened-concourse-task-staging-repo
-      passed: [scan-latest-hardened-concourse-task-staging-image]
+      passed: [scan-latest-hardened-concourse-task-staging-image, audit-hardened-concourse-task-staging-image]
       trigger: true
     - get: hardened-concourse-task-image-prod-version
       params: {bump: patch}
@@ -831,7 +773,7 @@ jobs:
       params:
         format: oci
       resource: ecr-hardened-s3-resource-simple-staging-repo
-      passed: [scan-latest-hardened-s3-resource-simple-staging-image]
+      passed: [scan-latest-hardened-s3-resource-simple-staging-image, audit-hardened-s3-resource-simple-staging-image]
       trigger: true
     - get: hardened-s3-resource-simple-image-prod-version
       params: {bump: patch}
@@ -1082,8 +1024,6 @@ groups:
 - name: all
   jobs:
   - configure-pipeline
-  - audit-hardened-concourse-task-image
-  - audit-hardened-s3-resource-simple-image
   - audit-hardened-concourse-task-staging-image
   - audit-hardened-s3-resource-simple-staging-image
   - conmon-hardened-concourse-task-image
@@ -1146,5 +1086,5 @@ groups:
   - terraform-apply-ecr
 - name: audit
   jobs:
-  - audit-hardened-concourse-task-image
-  - audit-hardened-s3-resource-simple-image
+  - audit-hardened-concourse-task-staging-image
+  - audit-hardened-s3-resource-simple-staging-image
