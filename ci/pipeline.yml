@@ -774,7 +774,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: cve-gating
+    branch: main
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -782,7 +782,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: cve-gating
+    branch: main
     paths: ["ci/scan-container.sh",
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
@@ -808,7 +808,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: cve-gating
+    branch: main
     paths: [terraform/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
