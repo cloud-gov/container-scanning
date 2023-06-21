@@ -806,14 +806,16 @@ jobs:
 
 - name: upload-hardened-concourse-task-prod-image
   plan:
-  - get: scan-source
-    passed: [scan-latest-hardened-concourse-task-staging-image]
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-hardened-concourse-task-staging-repo
-  - get: hardened-concourse-task-image-prod-version
-    params: {bump: patch}
+  - in_parallel:
+    - get: scan-source
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-hardened-concourse-task-staging-repo
+      passed: [scan-latest-hardened-concourse-task-staging-image]
+      trigger: true
+    - get: hardened-concourse-task-image-prod-version
+      params: {bump: patch}
   - put: ecr-harden-concourse-task-repo
     params:
       image: image-source/image.tar
@@ -823,14 +825,16 @@ jobs:
 
 - name: upload-hardened-s3-resource-simple-prod-image
   plan:
-  - get: scan-source
-    passed: [scan-latest-hardened-s3-resource-simple-staging-image]
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-hardened-s3-resource-simple-staging-repo
-  - get: hardened-s3-resource-simple-image-prod-version
-    params: {bump: patch}
+  - in_parallel:
+    - get: scan-source
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-hardened-s3-resource-simple-staging-repo
+      passed: [scan-latest-hardened-s3-resource-simple-staging-image]
+      trigger: true
+    - get: hardened-s3-resource-simple-image-prod-version
+      params: {bump: patch}
   - put: ecr-harden-s3-resource-simple-repo
     params:
       image: image-source/image.tar
