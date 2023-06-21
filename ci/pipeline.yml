@@ -896,17 +896,17 @@ jobs:
 
 - name: upload-hardened-concourse-prod-image
   plan:
-  - in_parallel:
-    - get: scan-source
-      passed: [scan-latest-hardened-concourse-task-staging-image]
-    - get: ecr-hardened-concourse-task-staging-repo
-      params:
-        format: oci
-    - get: hardened-concourse-image-prod-version
-      params: {bump: patch}
-  - put: ecr-harden-concourse-task-prod-repo
+  - get: scan-source
+    passed: [scan-latest-hardened-concourse-task-staging-image]
+  - get: image-source
     params:
-      image: ecr-hardened-concourse-task-staging-repo/image.tar
+      format: oci
+    resource: ecr-hardened-concourse-task-staging-repo
+  - get: hardened-concourse-image-prod-version
+    params: {bump: patch}
+  - put: ecr-harden-concourse-task-repo
+    params:
+      image: image-source/image.tar
       additional_tags: hardened-concourse-image-prod-version/version
   - put: hardened-concourse-image-prod-version
     params: {file: hardened-concourse-image-prod-version/version}
@@ -1099,6 +1099,17 @@ resources:
     location: "America/New_York"
     fire_immediately: true
 
+- name: hardened-concourse-image-prod-version
+  type: semver
+  source:
+    driver: s3
+    bucket: ((semver-bucket))
+    key: harden-concourse-docker-image-version
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
+    region_name: ((aws-region))
+    initial_version: 1.0.0
+
 resource_types:
 - name: slack-notification
   type: docker-image
@@ -1125,26 +1136,6 @@ resource_types:
   type: docker-image
   source:
     repository: 18fgsa/s3-resource-simple
-
-- name: ecr-harden-concourse-task-prod-repo
-  type: registry-image
-  source:
-    aws_access_key_id: ((aws-key))
-    aws_secret_access_key: ((aws-secret))
-    repository: harden-concourse-task
-    aws_region: us-gov-west-1
-    semver_constraint: ">= 1.0.0"
-
-- name: hardened-concourse-image-prod-version
-  type: semver
-  source:
-    driver: s3
-    bucket: ((semver-bucket))
-    key: harden-concourse-docker-image-version
-    access_key_id: ((aws-access-key-id))
-    secret_access_key: ((aws-secret-access-key))
-    region_name: ((aws-region))
-    initial_version: 1.0.0
 
 groups:
 - name: all
