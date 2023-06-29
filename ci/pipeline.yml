@@ -801,7 +801,8 @@ resources:
             "ci/audit-ecr-container.yml",
             "ci/ecr-cve-check.sh",
             "ci/ecr-cve-check.yml",
-            "ci/grype.yml"]
+            "ci/grype.yml",
+            "templates/conmon_csv.tmpl"]
     commit_verification_keys: ((cloud-gov-pgp-keys))      
 
 - name: terraform-config
