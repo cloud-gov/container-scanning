@@ -807,7 +807,7 @@ jobs:
 - name: upload-hardened-concourse-task-prod-image
   plan:
   - get: scan-source
-    passed: [scan-latest-hardened-concourse-task-staging-image]
+    passed: [scan-latest-hardened-concourse-task-staging-image, audit-hardened-concourse-task-staging-image]
   - get: image-source
     params:
       format: oci
