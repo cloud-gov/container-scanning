@@ -8,7 +8,7 @@ image_resource:
     aws_secret_access_key: ((aws-secret))
     repository: ((image))
     aws_region: us-gov-west-1
-    tag: ((tag))
+    semver_constraint: ">= 1.0.0"
 
 params:
   IMAGE: ((image))

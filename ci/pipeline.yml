@@ -26,7 +26,6 @@ jobs:
     file: scan-source/ci/audit-ecr-container.yml
     vars:
       image: harden-concourse-task-staging
-      tag: ((.:latest-tag))
   on_success:
     put: send-an-email
     params:
@@ -53,7 +52,6 @@ jobs:
     file: scan-source/ci/audit-ecr-container.yml
     vars:
       image: harden-s3-resource-simple-staging
-      tag: ((.:latest-tag))
   on_success:
     put: send-an-email
     params:
