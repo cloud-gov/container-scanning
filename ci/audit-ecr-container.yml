@@ -11,7 +11,7 @@ image_resource:
     tag: ((tag))
 
 params:
-  image: ((image))
+  IMAGE: ((image))
 
 inputs: 
 - name: scan-source

@@ -17,7 +17,7 @@ if [ "$(./scan-source/ci/parse_cis_audit_html.py --inputfile audit/cis-audit.htm
 then
   echo "uninstalling bs4"
   pip3 uninstall beautifulsoup4
-  echo "Container hardening audit for $image - Failed"
+  echo "Container hardening audit for ${IMAGE} - Failed"
   exit 1 
 fi
 
@@ -25,4 +25,4 @@ fi
 echo "uninstalling bs4"
 pip3 uninstall beautifulsoup4
 
-echo "Container hardening audit for $image - Passed"
+echo "Container hardening audit for ${IMAGE} - Passed"
