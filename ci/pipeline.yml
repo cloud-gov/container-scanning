@@ -10,7 +10,6 @@ jobs:
     file: pipeline-source/ci/pipeline.yml
 
 - name: audit-hardened-concourse-task-staging-image
-  old_name: audit-harden-concourse-task-staging
   plan:
   - in_parallel: &common_resources
     - get: monthly
@@ -42,7 +41,6 @@ jobs:
       attachment_globs: ["audit/cis-audit.html"]
 
 - name: audit-hardened-s3-resource-simple-staging-image
-  old_name: audit-harden-s3-resource-simple-staging
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -70,7 +68,6 @@ jobs:
       attachment_globs: ["audit/cis-audit.html"]
 
 - name: conmon-hardened-concourse-task-image
-  old_name: conmon-harden-concourse-task
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -97,7 +94,6 @@ jobs:
       body_text: "The pipeline for conmon-hardened-concourse-task-image has failed! Please check me out *wink*"
 
 - name: conmon-hardened-s3-resource-simple-image
-  old_name: conmon-harden-s3-resource-simple
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -124,7 +120,6 @@ jobs:
       body_text: "The pipeline for conmon-hardened-s3-resource-simple-image has failed! Please check me out *wink*"
 
 - name: conmon-18fgsa-sql-clients-image
-  old_name: conmon-18fgsa-sql-clients
   plan:
   - in_parallel: *common_resources
   - get: image-source
@@ -151,7 +146,6 @@ jobs:
       body_text: "The pipeline for conmon-18fgsa-sql-clients-image has failed! Please check me out *wink*"
 
 - name: scan-latest-hardened-concourse-task-staging-image
-  old_name: scan-latest-harden-concourse-task-image-staging
   plan:
   - in_parallel:
     - get: weekly
@@ -196,7 +190,6 @@ jobs:
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-latest-hardened-s3-resource-simple-staging-image
-  old_name: scan-latest-harden-s3-resource-simple-image-staging
   plan:
   - in_parallel:
     - get: weekly
@@ -241,7 +234,6 @@ jobs:
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-oracle-client-docker-image
-  old_name: scan-18fgsa-oracle-client
   plan:
   - in_parallel:
     - get: weekly
@@ -285,7 +277,6 @@ jobs:
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-sql-clients-docker-image
-  old_name: scan-18fgsa-sql-clients
   plan:
   - in_parallel:
     - get: weekly
@@ -401,7 +392,6 @@ jobs:
       STACK_NAME: ecr
 
 - name: list-tags-hardened-concourse-task
-  old_name: list-tags-harden-concourse-task
   plan:
   - in_parallel:
     - get: scan-source
@@ -434,7 +424,6 @@ jobs:
       STACK_NAME: ecr
 
 - name: list-tags-hardened-s3-resource-simple
-  old_name: list-tags-harden-s3-resource-simple
   plan:
   - in_parallel:
     - get: scan-source
@@ -563,7 +552,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-concourse-task-staging-image
-  old_name: scan-ecr-harden-concourse-task-staging
   plan:
   - in_parallel:
     - get: image-tags-harden-concourse-task-staging
@@ -612,7 +600,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-concourse-task-image
-  old_name: scan-ecr-harden-concourse-task
   plan:
   - in_parallel:
     - get: image-tags-harden-concourse-task
@@ -661,7 +648,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-s3-resource-simple-staging-image
-  old_name: scan-ecr-harden-s3-resource-simple-staging
   plan:
   - in_parallel:
     - get: image-tags-harden-s3-resource-simple-staging
@@ -700,7 +686,6 @@ jobs:
           icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-hardened-s3-resource-simple-image
-  old_name: scan-ecr-harden-s3-resource-simple
   plan:
   - in_parallel:
     - get: image-tags-harden-s3-resource-simple
@@ -750,14 +735,16 @@ jobs:
 
 - name: upload-hardened-concourse-task-prod-image
   plan:
-  - get: scan-source
-    passed: [scan-latest-hardened-concourse-task-staging-image, audit-hardened-concourse-task-staging-image]
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-hardened-concourse-task-staging-repo
-  - get: hardened-concourse-task-image-prod-version
-    params: {bump: patch}
+  - in_parallel:
+    - get: scan-source
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-hardened-concourse-task-staging-repo
+      passed: [scan-latest-hardened-concourse-task-staging-image, audit-hardened-concourse-task-staging-image]
+      trigger: true
+    - get: hardened-concourse-task-image-prod-version
+      params: {bump: patch}
   - put: ecr-harden-concourse-task-repo
     params:
       image: image-source/image.tar
@@ -767,14 +754,16 @@ jobs:
 
 - name: upload-hardened-s3-resource-simple-prod-image
   plan:
-  - get: scan-source
-    passed: [scan-latest-hardened-s3-resource-simple-staging-image]
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-hardened-s3-resource-simple-staging-repo
-  - get: hardened-s3-resource-simple-image-prod-version
-    params: {bump: patch}
+  - in_parallel:
+    - get: scan-source
+    - get: image-source
+      params:
+        format: oci
+      resource: ecr-hardened-s3-resource-simple-staging-repo
+      passed: [scan-latest-hardened-s3-resource-simple-staging-image, audit-hardened-s3-resource-simple-staging-image]
+      trigger: true
+    - get: hardened-s3-resource-simple-image-prod-version
+      params: {bump: patch}
   - put: ecr-harden-s3-resource-simple-repo
     params:
       image: image-source/image.tar
@@ -787,7 +776,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: cve-gating
+    branch: main
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -795,7 +784,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: cve-gating
+    branch: main
     paths: ["ci/scan-container.sh",
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
@@ -814,14 +803,15 @@ resources:
             "ci/audit-ecr-container.yml",
             "ci/ecr-cve-check.sh",
             "ci/ecr-cve-check.yml",
-            "ci/grype.yml"]
+            "ci/grype.yml",
+            "templates/conmon_csv.tmpl"]
     commit_verification_keys: ((cloud-gov-pgp-keys))      
 
 - name: terraform-config
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: cve-gating
+    branch: main
     paths: [terraform/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -1022,8 +1012,6 @@ groups:
 - name: all
   jobs:
   - configure-pipeline
-  - audit-hardened-concourse-task-image
-  - audit-hardened-s3-resource-simple-image
   - audit-hardened-concourse-task-staging-image
   - audit-hardened-s3-resource-simple-staging-image
   - conmon-hardened-concourse-task-image
@@ -1086,5 +1074,5 @@ groups:
   - terraform-apply-ecr
 - name: audit
   jobs:
-  - audit-hardened-concourse-task-image
-  - audit-hardened-s3-resource-simple-image
+  - audit-hardened-concourse-task-staging-image
+  - audit-hardened-s3-resource-simple-staging-image

@@ -1,0 +1,4 @@
+"Vulnerability ID","Description","Package","Version Installed","Severity","Fix State","Fix Versions"
+{{- range .Matches}}
+"{{.Vulnerability.ID}}","{{.Vulnerability.Description}}","{{.Artifact.Name}}","{{.Artifact.Version}}","{{.Vulnerability.Severity}}","{{.Vulnerability.Fix.State}}","{{.Vulnerability.Fix.Versions}}"
+{{- end}}
