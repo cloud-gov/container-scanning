@@ -41,38 +41,6 @@ jobs:
       body_text: "The audit for the latest harden-concourse-task-staging image contains failures. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
 
-- name: audit-hardened-concourse-task-image
-  old_name: audit-harden-concourse-task
-  plan:
-  - in_parallel: &common_resources
-    - get: monthly
-      trigger: true
-    - get: scan-source
-      trigger: false
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-harden-concourse-task-repo
-  - load_var: latest-tag
-    file: image-source/tag
-  - task: audit
-    file: scan-source/ci/audit-ecr-container.yml
-    vars:
-      image: harden-concourse-task
-      tag: ((.:latest-tag))
-  on_success:
-    put: send-an-email
-    params:
-      subject_text: "Passed - Audit for the latest harden-concourse-task image"
-      body_text: "The audit for the latest harden-concourse-task image passed successfully. Results are attached."
-      attachment_globs: ["audit/cis-audit.html"]
-  on_failure:
-    put: send-an-email
-    params:
-      subject_text: "Failed - Audit for latest harden-concourse-task-staging image"
-      body_text: "The audit for the latest harden-concourse-task-staging image contains failures. Results are attached."
-      attachment_globs: ["audit/cis-audit.html"]
-
 - name: audit-hardened-s3-resource-simple-staging-image
   old_name: audit-harden-s3-resource-simple-staging
   plan:
@@ -99,34 +67,6 @@ jobs:
     params:
       subject_text: "Failed - Audit for latest harden-s3-resource-simple-staging image"
       body_text: "The audit for the latest harden-s3-resource-simple-staging image contains failures. Results are attached."
-      attachment_globs: ["audit/cis-audit.html"]
-
-- name: audit-hardened-s3-resource-simple-image
-  old_name: audit-harden-s3-resource-simple
-  plan:
-  - in_parallel: *common_resources
-  - get: image-source
-    params:
-      format: oci
-    resource: ecr-harden-s3-resource-simple-repo
-  - load_var: latest-tag
-    file: image-source/tag
-  - task: audit
-    file: scan-source/ci/audit-ecr-container.yml
-    vars:
-      image: harden-s3-resource-simple
-      tag: ((.:latest-tag))
-  on_success:
-    put: send-an-email
-    params:
-      subject_text: "Passed - Audit for the harden-s3-resource-simple image"
-      body_text: "The audit for the latest harden-s3-resource-simple image passed successfully. Results are attached."
-      attachment_globs: ["audit/cis-audit.html"]
-  on_failure:
-    put: send-an-email
-    params:
-      subject_text: "Failed - Audit for latest harden-s3-resource-simple image"
-      body_text: "The audit for the latest harden-s3-resource-simple image contains failures. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
 
 - name: conmon-hardened-concourse-task-image
