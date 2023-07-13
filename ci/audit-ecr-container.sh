@@ -16,13 +16,13 @@ usg audit cis_level1_server --html-file audit/cis-audit.html
 if [ "$(./scan-source/ci/parse_cis_audit_html.py --inputfile audit/cis-audit.html)" == "failed" ]
 then
   echo "uninstalling bs4"
-  pip3 -y uninstall beautifulsoup4
+  pip3 uninstall -y beautifulsoup4
   echo "Container hardening audit for ${IMAGE} - Failed"
   exit 1 
 fi
 
 # Uninstall beautifulsoup4 to keep our image tidy
 echo "uninstalling bs4"
-pip3 -y uninstall beautifulsoup4
+pip3 uninstall -y beautifulsoup4
 
 echo "Container hardening audit for ${IMAGE} - Passed"
