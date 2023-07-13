@@ -10,6 +10,9 @@ image_resource:
     aws_region: us-gov-west-1
     tag: ((tag))
 
+params:
+  image: ((image))
+
 inputs: 
 - name: scan-source
 - name: image-source

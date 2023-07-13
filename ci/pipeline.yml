@@ -31,14 +31,15 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-concourse-task-staging image"
-      body_text: "Here are the audit results for the latest harden-concourse-task-staging"
+      subject_text: "Passed - Audit for the latest harden-concourse-task-staging image"
+      body_text: "The audit for the latest harden-concourse-task-staging image passed successfully. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-concourse-task-staging image - Failure"
-      body_text: "The pipeline to audit the latest harden-concourse-task-staging image has failed! Please check me out *wink*"
+      subject_text: "Failed - Audit for latest harden-concourse-task-staging image"
+      body_text: "The audit for the latest harden-concourse-task-staging image contains failures. Results are attached."
+      attachment_globs: ["audit/cis-audit.html"]
 
 - name: audit-hardened-concourse-task-image
   old_name: audit-harden-concourse-task
@@ -62,14 +63,15 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-concourse-task image"
-      body_text: "Here are the audit results for the latest harden-concourse-task"
+      subject_text: "Passed - Audit for the latest harden-concourse-task image"
+      body_text: "The audit for the latest harden-concourse-task image passed successfully. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-concourse-task image - Failure"
-      body_text: "The pipeline to audit the latest harden-concourse-task image has failed! Please check me out *wink*"
+      subject_text: "Failed - Audit for latest harden-concourse-task-staging image"
+      body_text: "The audit for the latest harden-concourse-task-staging image contains failures. Results are attached."
+      attachment_globs: ["audit/cis-audit.html"]
 
 - name: audit-hardened-s3-resource-simple-staging-image
   old_name: audit-harden-s3-resource-simple-staging
@@ -89,14 +91,15 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-s3-resource-simple-staging image"
-      body_text: "Here are the audit results for the latest harden-s3-resource-simple-staging image"
+      subject_text: "Passed - Audit for the harden-s3-resource-simple-staging image"
+      body_text: "The audit for the latest harden-s3-resource-simple-staging image passed successfully. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for the latest harden-s3-resource-simple-staging image - Failure"
-      body_text: "The pipeline to audit the latest harden-s3-resource-simple-staging image has failed! Please check me out *wink*"
+      subject_text: "Failed - Audit for latest harden-s3-resource-simple-staging image"
+      body_text: "The audit for the latest harden-s3-resource-simple-staging image contains failures. Results are attached."
+      attachment_globs: ["audit/cis-audit.html"]
 
 - name: audit-hardened-s3-resource-simple-image
   old_name: audit-harden-s3-resource-simple
@@ -116,14 +119,15 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-s3-resource-simple image"
-      body_text: "Here are the audit results for the latest harden-s3-resource-simple image"
+      subject_text: "Passed - Audit for the harden-s3-resource-simple image"
+      body_text: "The audit for the latest harden-s3-resource-simple image passed successfully. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for harden-s3-resource-simple image - Failure"
-      body_text: "The pipeline to audit the harden-s3-resource-simple image has failed! Please check me out *wink*"
+      subject_text: "Failed - Audit for latest harden-s3-resource-simple image"
+      body_text: "The audit for the latest harden-s3-resource-simple image contains failures. Results are attached."
+      attachment_globs: ["audit/cis-audit.html"]
 
 - name: conmon-hardened-concourse-task-image
   old_name: conmon-harden-concourse-task

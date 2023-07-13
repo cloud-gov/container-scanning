@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 __DESCRIPTION__ = """
 Search for failed scan results to determine if an image can
-promote from staging to production
+be promoted from staging to production
 """
 # This is a script to parse the output of
 # the usg audit in html from cis-audit.html
