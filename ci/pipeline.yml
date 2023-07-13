@@ -30,14 +30,15 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-concourse-task-staging image"
-      body_text: "Here are the audit results for the latest harden-concourse-task-staging"
+      subject_text: "Passed - Audit for the latest harden-concourse-task-staging image"
+      body_text: "The audit for the latest harden-concourse-task-staging image passed successfully. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-concourse-task-staging image - Failure"
-      body_text: "The pipeline to audit the latest harden-concourse-task-staging image has failed! Please check me out *wink*"
+      subject_text: "Failed - Audit for latest harden-concourse-task-staging image"
+      body_text: "The audit for the latest harden-concourse-task-staging image contains failures. Results are attached."
+      attachment_globs: ["audit/cis-audit.html"]
 
 - name: audit-hardened-s3-resource-simple-staging-image
   plan:
@@ -56,14 +57,15 @@ jobs:
   on_success:
     put: send-an-email
     params:
-      subject_text: "Audit Results for latest harden-s3-resource-simple-staging image"
-      body_text: "Here are the audit results for the latest harden-s3-resource-simple-staging image"
+      subject_text: "Passed - Audit for the harden-s3-resource-simple-staging image"
+      body_text: "The audit for the latest harden-s3-resource-simple-staging image passed successfully. Results are attached."
       attachment_globs: ["audit/cis-audit.html"]
   on_failure:
     put: send-an-email
     params:
-      subject_text: "Audit Results for the latest harden-s3-resource-simple-staging image - Failure"
-      body_text: "The pipeline to audit the latest harden-s3-resource-simple-staging image has failed! Please check me out *wink*"
+      subject_text: "Failed - Audit for latest harden-s3-resource-simple-staging image"
+      body_text: "The audit for the latest harden-s3-resource-simple-staging image contains failures. Results are attached."
+      attachment_globs: ["audit/cis-audit.html"]
 
 - name: conmon-hardened-concourse-task-image
   plan:
