@@ -20,8 +20,6 @@ jobs:
     params:
       format: oci
     resource: ecr-hardened-concourse-task-staging-repo
-  - load_var: latest-tag
-    file: image-source/tag
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
@@ -46,8 +44,6 @@ jobs:
     params:
       format: oci
     resource: ecr-hardened-s3-resource-simple-staging-repo
-  - load_var: latest-tag
-    file: image-source/tag
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
     vars:
