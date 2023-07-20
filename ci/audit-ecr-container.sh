@@ -11,7 +11,7 @@ pip3 install beautifulsoup4
 
 # Run cis audit and put html results into cis-audit.html file
 echo "running audit"
-usg audit cis_level1_server --html-file audit/cis-audit.html --results-file audit/cis-audit.xml
+usg audit cis_level1_server --html-file $PWD/audit/cis-audit.html --results-file $PWD/audit/cis-audit.xml
 
 # Parse the resulting cis-audit.html file looking for pass/fail via a python script
 if [ "$(./scan-source/ci/parse_cis_audit_html.py --inputfile audit/cis-audit.html)" == "failed" ]
