@@ -3,6 +3,7 @@
 # set up dir and file
 mkdir audit
 touch audit/cis-audit.html
+touch audit/cis-audit.xml
 
 echo "installing bs4"
 # Install the python library BeautifulSoup to parse html 
