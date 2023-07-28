@@ -110,6 +110,7 @@ jobs:
     resource: ecr-harden-concourse-task-repo
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
+    image: ecr-harden-concourse-task-repo
     params:
       FILE: concourse-task
       IMAGE: "((harden-concourse-task-repo))"
@@ -136,6 +137,7 @@ jobs:
     resource: ecr-harden-s3-resource-simple-repo
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
+    image: ecr-harden-concourse-task-repo
     params:
       FILE: s3-resource-simple
       IMAGE: "((harden-s3-resource-simple-repo))"
@@ -162,6 +164,7 @@ jobs:
     resource: ecr-sql-clients
   - task: prep-email
     file: scan-source/ci/conmon-scan-ecr-container.yml
+    image: ecr-harden-concourse-task-repo
     params:
       FILE: sql-clients
       IMAGE: "((sql-clients-repo))"
@@ -190,15 +193,19 @@ jobs:
       params:
         format: oci
       trigger: true
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - load_var: tag
     file: ecr-hardened-concourse-task-staging-repo/tag
   - task: scan
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/scan-ecr-container.yml
     params:
       IMAGE: "((harden-concourse-task-staging-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   - task: check
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/ecr-cve-check.yml
     params:
       IMAGE: "((harden-concourse-task-staging-repo)):((.:tag))"
@@ -234,16 +241,20 @@ jobs:
       params:
         format: oci
       trigger: true
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - load_var: tag
     file: ecr-hardened-s3-resource-simple-staging-repo/tag
   - task: scan
     file: scan-source/ci/scan-ecr-container.yml
+    image: ecr-harden-concourse-task-repo
     params:
       IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   - task: check
     file: scan-source/ci/ecr-cve-check.yml
+    image: ecr-harden-concourse-task-repo
     params:
       IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
       IMAGENAME: "harden-s3-resource-simple-staging:((.:tag))"
@@ -278,11 +289,15 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - task: scan
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/oracle-client
   - task: check
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/cve-check.yml
     params:
       IMAGE: 18fgsa/oracle-client
@@ -321,11 +336,15 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - task: scan
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/scan-container.yml
     params:
       IMAGE: 18fgsa/sql-clients
   - task: check
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/cve-check.yml
     params:
       IMAGE: 18fgsa/sql-clients
@@ -360,7 +379,10 @@ jobs:
       resource: terraform-config
       trigger: true
     - get: pipeline-tasks
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - task: terraform-plan
+    image: ecr-harden-concourse-task-repo
     file: terraform-templates/terraform/terraform-apply.yml
     params: &tf-ecr
       TERRAFORM_ACTION: plan
@@ -389,7 +411,10 @@ jobs:
       trigger: true
     - get: pipeline-tasks
       passed: [terraform-plan-ecr]
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - task: terraform-apply
+    image: ecr-harden-concourse-task-repo
     file: terraform-templates/terraform/terraform-apply.yml
     params:
       <<: *tf-ecr
@@ -402,7 +427,10 @@ jobs:
       passed: [scan-oracle-client-docker-image]
     - get: weekly
       trigger: true
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - task: list-images
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
@@ -417,7 +445,9 @@ jobs:
       passed: [scan-sql-clients-docker-image]
     - get: weekly
       trigger: true
+    - get: ecr-harden-concourse-task-repo
   - task: list-images
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
@@ -434,6 +464,7 @@ jobs:
       trigger: true
     - get: ecr-harden-concourse-task-repo
   - task: list-images
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
@@ -449,7 +480,9 @@ jobs:
     - get: weekly
       trigger: true
     - get: ecr-hardened-concourse-task-staging-repo
+    - get: ecr-harden-concourse-task-repo
   - task: list-images
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
@@ -465,7 +498,9 @@ jobs:
     - get: weekly
       trigger: true
     - get: ecr-harden-s3-resource-simple-repo
+    - get: ecr-harden-concourse-task-repo
   - task: list-images
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
@@ -481,7 +516,9 @@ jobs:
     - get: weekly
       trigger: true
     - get: ecr-hardened-s3-resource-simple-staging-repo
+    - get: ecr-harden-concourse-task-repo
   - task: list-images
+    image: ecr-harden-concourse-task-repo
     file: scan-source/ci/list-images.yml
     params:
       AWS_DEFAULT_REGION: us-gov-west-1
@@ -500,6 +537,7 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-oracle-client]
+    - get: ecr-harden-concourse-task-repo
   - load_var: tags
     file: image-tags-oracle-client/tags-oracle-client.json
   - across:
@@ -507,12 +545,14 @@ jobs:
       values: ((.:tags))
     do:
     - task: scan
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((oracle-client-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
     - task: check
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((oracle-client-repo)):((.:tag))"
@@ -548,6 +588,7 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-sql-clients]
+    - get: ecr-harden-concourse-task-repo
   - load_var: tags
     file: image-tags-sql-clients/tags-sql-clients.json
   - across:
@@ -555,12 +596,14 @@ jobs:
       values: ((.:tags))
     do:
     - task: scan
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((sql-clients-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
     - task: check
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((sql-clients-repo)):((.:tag))"
@@ -596,6 +639,7 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-hardened-concourse-task-staging]
+    - get: ecr-harden-concourse-task-repo
   - load_var: tags
     file: image-tags-harden-concourse-task-staging/tags-harden-concourse-task.json
   - across:
@@ -603,12 +647,14 @@ jobs:
       values: ((.:tags))
     do:
     - task: scan
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-concourse-task-staging-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
     - task: check
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-concourse-task-staging-repo)):((.:tag))"
@@ -644,6 +690,7 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-hardened-concourse-task]
+    - get: ecr-harden-concourse-task-repo
   - load_var: tags
     file: image-tags-harden-concourse-task/tags-harden-concourse-task.json
   - across:
@@ -651,12 +698,14 @@ jobs:
       values: ((.:tags))
     do:
     - task: scan
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
     - task: check
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-concourse-task-repo)):((.:tag))"
@@ -692,6 +741,7 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-hardened-s3-resource-simple-staging]
+    - get: ecr-harden-concourse-task-repo
   - load_var: tags
     file: image-tags-harden-s3-resource-simple-staging/tags-harden-s3-resource-simple-staging.json
   - across:
@@ -699,12 +749,14 @@ jobs:
       values: ((.:tags))
     do:
     - task: scan
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
     - task: check
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-s3-resource-simple-staging-repo)):((.:tag))"
@@ -730,6 +782,7 @@ jobs:
     - get: scan-source
       trigger: false
       passed: [list-tags-hardened-s3-resource-simple]
+    - get: ecr-harden-concourse-task-repo
   - load_var: tags
     file: image-tags-harden-s3-resource-simple/tags-harden-s3-resource-simple.json
   - across:
@@ -737,12 +790,14 @@ jobs:
       values: ((.:tags))
     do:
     - task: scan
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/scan-ecr-container.yml
       params:
         IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
         AWS_DEFAULT_REGION: us-gov-west-1
         REGISTRY: ((aws-ecr-registry))
     - task: check
+      image: ecr-harden-concourse-task-repo
       file: scan-source/ci/ecr-cve-check.yml
       params:
         IMAGE: "((harden-s3-resource-simple-repo)):((.:tag))"
