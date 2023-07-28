@@ -16,12 +16,15 @@ jobs:
       trigger: true
     - get: scan-source
       trigger: false
+    - get: ecr-harden-concourse-task-repo
+      trigger: false
   - get: image-source
     params:
       format: oci
     resource: ecr-hardened-concourse-task-staging-repo
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
+    image: ecr-harden-concourse-task-repo
     vars:
       image: harden-concourse-task-staging
   on_success:
@@ -64,6 +67,7 @@ jobs:
     resource: ecr-hardened-s3-resource-simple-staging-repo
   - task: audit
     file: scan-source/ci/audit-ecr-container.yml
+    image: ecr-harden-concourse-task-repo
     vars:
       image: harden-s3-resource-simple-staging
   on_success:
