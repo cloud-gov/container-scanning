@@ -113,7 +113,7 @@ jobs:
     image: ecr-harden-concourse-task-repo
     params:
       FILE: concourse-task
-      IMAGE: "((harden-concourse-task-repo))"
+      IMAGE: ((harden-concourse-task-repo))
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   on_success:
@@ -865,7 +865,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: fix-conmon
     paths: [ci/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
@@ -873,7 +873,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: fix-conmon
     paths: ["ci/scan-container.sh",
             "ci/scan-container.yml",
             "ci/scan-ecr-container.sh",
@@ -900,7 +900,7 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/container-scanning
-    branch: main
+    branch: fix-conmon
     paths: [terraform/*]
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
