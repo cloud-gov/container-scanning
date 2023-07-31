@@ -140,7 +140,7 @@ jobs:
     image: ecr-harden-concourse-task-repo
     params:
       FILE: s3-resource-simple
-      IMAGE: "((harden-s3-resource-simple-repo))"
+      IMAGE: ((harden-s3-resource-simple-repo))
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   on_success:
@@ -148,7 +148,7 @@ jobs:
     params:
       subject_text: "ConMon Results for harden-s3-resource-simple image scans"
       body_text: "Here is the conmon results for s3-resource-simple"
-      attachment_globs: ["output/s3-resource-simple.xml"]
+      attachment_globs: ["output/s3-resource-simple.csv"]
   on_failure:
     put: send-an-email
     params:
@@ -167,7 +167,7 @@ jobs:
     image: ecr-harden-concourse-task-repo
     params:
       FILE: sql-clients
-      IMAGE: "((sql-clients-repo))"
+      IMAGE: ((sql-clients-repo))
       AWS_DEFAULT_REGION: us-gov-west-1
       REGISTRY: ((aws-ecr-registry))
   on_success:
@@ -175,7 +175,7 @@ jobs:
     params:
       subject_text: "ConMon Results for sql-clients image scans"
       body_text: "Here is the conmon results for sql-clients"
-      attachment_globs: ["output/sql-clients.xml"]
+      attachment_globs: ["output/sql-clients.csv"]
   on_failure:
     put: send-an-email
     params:
