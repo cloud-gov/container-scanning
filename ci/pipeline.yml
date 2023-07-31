@@ -121,7 +121,7 @@ jobs:
     params:
       subject_text: "ConMon Results for harden-concourse-task image scans"
       body_text: "Here is the conmon results for harden-concourse-task"
-      attachment_globs: ["output/concourse-task.xml"]
+      attachment_globs: ["output/concourse-task.csv"]
   on_failure:
     put: send-an-email
     params:
