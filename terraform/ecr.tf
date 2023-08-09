@@ -8,16 +8,16 @@ variable "repositories" {
   type = list(string)
   default = [
     "concourse-task",
+    "s3-resource-simple",
+    "oracle-client",
+    "sql-clients",
     "git-resource",
     "harden-concourse-task",
-    "harden-concourse-task-staging",
     "harden-s3-resource-simple",
+    "harden-concourse-task-staging",
     "harden-s3-resource-simple-staging",
-    "oracle-client",
     "registry-image-resource",
-    "s3-resource-simple",
     "s3-simple-resource",
-    "sql-clients",
     "ubuntu-hardened",
   ]
 }
