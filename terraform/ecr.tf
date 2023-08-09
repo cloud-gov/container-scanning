@@ -11,7 +11,6 @@ variable "repositories" {
     "s3-resource-simple",
     "oracle-client",
     "sql-clients",
-    "git-resource",
     "harden-concourse-task",
     "harden-s3-resource-simple",
     "harden-concourse-task-staging",
@@ -19,6 +18,7 @@ variable "repositories" {
     "registry-image-resource",
     "s3-simple-resource",
     "ubuntu-hardened",
+    "git-resource",
   ]
 }
 
