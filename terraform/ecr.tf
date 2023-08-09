@@ -5,20 +5,20 @@ variable "tooling_stack_name" {
 }
 
 variable "repositories" {
-  type = list(string)
+  type = set(string)
   default = [
     "concourse-task",
-    "s3-resource-simple",
-    "oracle-client",
-    "sql-clients",
-    "harden-concourse-task",
-    "harden-s3-resource-simple",
-    "harden-concourse-task-staging",
-    "harden-s3-resource-simple-staging",
-    "registry-image-resource",
-    "s3-simple-resource",
-    "ubuntu-hardened",
     "git-resource",
+    "harden-concourse-task",
+    "harden-concourse-task-staging",
+    "harden-s3-resource-simple",
+    "harden-s3-resource-simple-staging",
+    "oracle-client",
+    "registry-image-resource",
+    "s3-resource-simple",
+    "s3-simple-resource",
+    "sql-clients",
+    "ubuntu-hardened",
   ]
 }
 
@@ -38,8 +38,8 @@ data "terraform_remote_state" "tooling" {
 
 
 resource "aws_ecr_repository" "repository" {
-  count = length(var.repositories)
+  for_each = var.repositories
 
-  name                 = var.repositories[count.index]
+  name                 = each.key
   image_tag_mutability = "IMMUTABLE"
 }
