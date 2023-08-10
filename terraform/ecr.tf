@@ -17,6 +17,7 @@ variable "repositories" {
     "registry-image-resource",
     "s3-resource-simple",
     "s3-simple-resource",
+    "slack-notification-resource",
     "sql-clients",
     "ubuntu-hardened",
   ]
