@@ -42,5 +42,6 @@ resource "aws_ecr_repository" "repository" {
   for_each = var.repositories
 
   name                 = each.key
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
+  tags = {}
 }
