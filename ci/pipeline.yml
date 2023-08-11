@@ -408,7 +408,7 @@ jobs:
     - get: terraform-templates
       resource: terraform-config
       passed: [terraform-plan-ecr]
-      trigger: true
+      trigger: false
     - get: pipeline-tasks
       passed: [terraform-plan-ecr]
     - get: ecr-harden-concourse-task-repo
