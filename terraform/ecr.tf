@@ -8,6 +8,7 @@ variable "repositories" {
   type = set(string)
   default = [
     "concourse-task",
+    "general-task",
     "git-resource",
     "harden-concourse-task",
     "harden-concourse-task-staging",
@@ -43,5 +44,5 @@ resource "aws_ecr_repository" "repository" {
 
   name                 = each.key
   image_tag_mutability = "MUTABLE"
-  tags = {}
+  tags                 = {}
 }
