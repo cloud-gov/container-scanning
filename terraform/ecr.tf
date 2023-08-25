@@ -16,6 +16,7 @@ variable "repositories" {
     "harden-s3-resource-simple-staging",
     "oracle-client",
     "registry-image-resource",
+    "s3-resource",
     "s3-resource-simple",
     "s3-simple-resource",
     "slack-notification-resource",
