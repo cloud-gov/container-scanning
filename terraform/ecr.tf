@@ -7,6 +7,7 @@ variable "tooling_stack_name" {
 variable "repositories" {
   type = set(string)
   default = [
+    "cf-resource",
     "concourse-task",
     "general-task",
     "git-resource",
