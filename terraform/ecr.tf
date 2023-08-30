@@ -20,6 +20,7 @@ variable "repositories" {
     "s3-resource",
     "s3-resource-simple",
     "s3-simple-resource",
+    "semver-resource",
     "slack-notification-resource",
     "sql-clients",
     "ubuntu-hardened",
