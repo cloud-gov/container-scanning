@@ -21,4 +21,6 @@ TAG=$(cat image-source/tag)
 
 #scan
 grype ${IMAGE}:${TAG} -c scan-source/ci/grype.yaml -q -o template -t scan-source/templates/conmon_csv.tmpl --file output/${FILE}.csv
+# The JAB requires XML formatted reports so they can be uploaded to
+# their vulnerability management tool.
 grype ${IMAGE}:${TAG} -c scan-source/ci/grype.yaml -q -o cyclonedx --file output/${FILE}.xml
