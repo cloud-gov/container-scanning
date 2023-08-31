@@ -122,7 +122,7 @@ jobs:
       subject_text: "ConMon Results for harden-concourse-task image scans"
       body_text: "Here is the conmon results for harden-concourse-task"
       attachment_globs:
-        - "output/concourse-task.html"
+        - "output/concourse-task.csv"
         - "output/concourse-task.xml"
   on_failure:
     put: send-an-email
@@ -151,7 +151,7 @@ jobs:
       subject_text: "ConMon Results for harden-s3-resource-simple image scans"
       body_text: "Here is the conmon results for s3-resource-simple"
       attachment_globs:
-        - "output/s3-resource-simple.html"
+        - "output/s3-resource-simple.csv"
         - "output/s3-resource-simple.xml"
   on_failure:
     put: send-an-email
@@ -180,7 +180,7 @@ jobs:
       subject_text: "ConMon Results for sql-clients image scans"
       body_text: "Here is the conmon results for sql-clients"
       attachment_globs:
-        - "output/sql-clients.html"
+        - "output/sql-clients.csv"
         - "output/sql-clients.xml"
   on_failure:
     put: send-an-email
