@@ -11,6 +11,7 @@ variable "repositories" {
     "concourse-task",
     "general-task",
     "git-resource",
+    "github-pr-resource",
     "harden-concourse-task",
     "harden-concourse-task-staging",
     "harden-s3-resource-simple",
