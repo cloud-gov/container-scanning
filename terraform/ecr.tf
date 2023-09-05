@@ -9,6 +9,7 @@ variable "repositories" {
   default = [
     "cf-resource",
     "concourse-task",
+    "email-resource",
     "general-task",
     "git-resource",
     "github-pr-resource",
