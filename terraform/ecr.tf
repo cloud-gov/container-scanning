@@ -52,4 +52,5 @@ resource "aws_ecr_repository" "repository" {
   name                 = each.key
   image_tag_mutability = "MUTABLE"
   tags                 = {}
+  tags_all             = {}
 }
