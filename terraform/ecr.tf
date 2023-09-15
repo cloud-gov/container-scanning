@@ -26,6 +26,7 @@ variable "repositories" {
     "semver-resource",
     "slack-notification-resource",
     "sql-clients",
+    "time-resource",
     "ubuntu-hardened",
   ]
 }
