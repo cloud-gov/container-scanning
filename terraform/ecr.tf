@@ -7,6 +7,7 @@ variable "tooling_stack_name" {
 variable "repositories" {
   type = set(string)
   default = [
+    "cf-cli-resource",
     "cf-resource",
     "concourse-task",
     "cron-resource",
