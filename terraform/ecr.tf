@@ -22,7 +22,7 @@ data "terraform_remote_state" "tooling" {
 
 variable "pages_repositories" {
   type = list(string)
-  default = ["pages-build-container", "pages-owasp-zap-task"]
+  default = ["pages-build-container", "pages-owasp-zap-task", "pages-cf-build-tasks"]
 }
 
 
