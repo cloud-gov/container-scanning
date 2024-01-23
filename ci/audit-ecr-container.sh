@@ -22,7 +22,7 @@ then
   exit 1 
 fi
 
-# Uninstall beautifulsoup4 to keep our image tidy
+# Uninstall beautifulsoup4 to keep our image tidy 
 echo "uninstalling bs4"
 pip3 uninstall -y beautifulsoup4
 
