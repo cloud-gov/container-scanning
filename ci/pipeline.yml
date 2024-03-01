@@ -736,13 +736,6 @@ resources:
             "ci/ecr-cve-check.yml",
             "ci/grype.yml",
             "templates/conmon_csv.tmpl"]
-    commit_verification_keys: ((cloud-gov-pgp-keys))      
-
-- name: pipeline-tasks
-  type: git
-  source:
-    uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
-    branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: sql-clients-docker-repo
