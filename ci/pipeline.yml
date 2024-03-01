@@ -331,54 +331,6 @@ jobs:
       username: ((username))
       icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: terraform-plan-ecr
-  plan:
-  - in_parallel:
-    - get: terraform-templates
-      resource: terraform-config
-      trigger: true
-    - get: pipeline-tasks
-    - get: ecr-harden-concourse-task-repo
-      trigger: false
-  - task: terraform-plan
-    image: ecr-harden-concourse-task-repo
-    file: terraform-templates/terraform/terraform-apply.yml
-    params: &tf-ecr
-      TERRAFORM_ACTION: plan
-      TEMPLATE_SUBDIR: terraform/
-      STACK_NAME: ecr
-      S3_TFSTATE_BUCKET: ((tf-state-bucket))
-      AWS_DEFAULT_REGION: us-gov-west-1
-      TF_VAR_remote_state_bucket: ((tf-state-bucket))
-      TF_VAR_tooling_stack_name: tooling
-  - put: slack
-    params:
-      text_file: terraform-state/message.txt
-      text:  |
-        :terraform: $BUILD_JOB_NAME needs review
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform'
-      username: ((username))
-      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-
-- name: terraform-apply-ecr
-  plan:
-  - in_parallel:
-    - get: terraform-templates
-      resource: terraform-config
-      passed: [terraform-plan-ecr]
-      trigger: false
-    - get: pipeline-tasks
-      passed: [terraform-plan-ecr]
-    - get: ecr-harden-concourse-task-repo
-      trigger: false
-  - task: terraform-apply
-    image: ecr-harden-concourse-task-repo
-    file: terraform-templates/terraform/terraform-apply.yml
-    params:
-      <<: *tf-ecr
-      TERRAFORM_ACTION: apply
-
 - name: list-tags-sql-clients
   plan:
   - in_parallel:
@@ -786,14 +738,6 @@ resources:
             "templates/conmon_csv.tmpl"]
     commit_verification_keys: ((cloud-gov-pgp-keys))      
 
-- name: terraform-config
-  type: git
-  source:
-    uri: https://github.com/cloud-gov/container-scanning
-    branch: main
-    paths: [terraform/*]
-    commit_verification_keys: ((cloud-gov-pgp-keys))
-
 - name: pipeline-tasks
   type: git
   source:
@@ -975,8 +919,6 @@ groups:
   - conmon-hardened-s3-resource-simple-image
   - conmon-18fgsa-sql-clients-image
   - scan-sql-clients-docker-image
-  - terraform-plan-ecr
-  - terraform-apply-ecr
   - list-tags-sql-clients
   - list-tags-hardened-concourse-task
   - list-tags-hardened-s3-resource-simple
@@ -1019,10 +961,6 @@ groups:
   - list-tags-hardened-s3-resource-simple-staging
   - scan-hardened-concourse-task-image
   - scan-hardened-s3-resource-simple-image
-- name: terraform
-  jobs:
-  - terraform-plan-ecr
-  - terraform-apply-ecr
 - name: audit
   jobs:
   - audit-hardened-concourse-task-staging-image
