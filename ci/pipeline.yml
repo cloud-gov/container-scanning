@@ -284,53 +284,6 @@ jobs:
         username: ((username))
         icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
-- name: scan-oracle-client-docker-image
-  plan:
-  - in_parallel:
-    - get: weekly
-      trigger: true
-    - get: oracle-client-docker-repo
-      params:
-        format: oci
-      trigger: true
-    - get: scan-source
-      trigger: false
-    - get: ecr-harden-concourse-task-repo
-      trigger: false
-  - task: scan
-    image: ecr-harden-concourse-task-repo
-    file: scan-source/ci/scan-container.yml
-    params:
-      IMAGE: 18fgsa/oracle-client
-  - task: check
-    image: ecr-harden-concourse-task-repo
-    file: scan-source/ci/cve-check.yml
-    params:
-      IMAGE: 18fgsa/oracle-client
-  - put: ecr-oracle-client
-    params:
-      image: oracle-client-docker-repo/image.tar
-      additional_tags: oracle-client-docker-repo/tag
-  on_failure:
-    put: slack
-    params:
-      text:  |
-        :x: FAILED to upload oracle-client image to ECR
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform-news'
-      username: ((username))
-      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-  on_success:
-    put: slack
-    params:
-      text_file: message/alert.txt
-      text: |
-        :white_check_mark: $TEXT_FILE_CONTENT
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: '#cg-platform-news'
-      username: ((username))
-      icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-
 - name: scan-sql-clients-docker-image
   plan:
   - in_parallel:
@@ -426,24 +379,6 @@ jobs:
       <<: *tf-ecr
       TERRAFORM_ACTION: apply
 
-- name: list-tags-oracle-client
-  plan:
-  - in_parallel:
-    - get: scan-source
-      passed: [scan-oracle-client-docker-image]
-    - get: weekly
-      trigger: true
-    - get: ecr-harden-concourse-task-repo
-      trigger: false
-  - task: list-images
-    image: ecr-harden-concourse-task-repo
-    file: scan-source/ci/list-images.yml
-    params:
-      AWS_DEFAULT_REGION: us-gov-west-1
-      IMAGE_REPOSITORY: oracle-client
-      S3_TFSTATE_BUCKET: ((tf-state-bucket))
-      STACK_NAME: ecr
-
 - name: list-tags-sql-clients
   plan:
   - in_parallel:
@@ -531,57 +466,6 @@ jobs:
       IMAGE_REPOSITORY: harden-s3-resource-simple-staging
       S3_TFSTATE_BUCKET: ((tf-state-bucket))
       STACK_NAME: ecr
-
-- name: scan-ecr-oracle-client
-  plan:
-  - in_parallel:
-    - get: image-tags-oracle-client
-      trigger: true
-    - get: weekly
-      trigger: true
-      passed: [list-tags-oracle-client]
-    - get: scan-source
-      trigger: false
-      passed: [list-tags-oracle-client]
-    - get: ecr-harden-concourse-task-repo
-  - load_var: tags
-    file: image-tags-oracle-client/tags-oracle-client.json
-  - across:
-    - var: tag
-      values: ((.:tags))
-    do:
-    - task: scan
-      image: ecr-harden-concourse-task-repo
-      file: scan-source/ci/scan-ecr-container.yml
-      params:
-        IMAGE: "((oracle-client-repo)):((.:tag))"
-        AWS_DEFAULT_REGION: us-gov-west-1
-        REGISTRY: ((aws-ecr-registry))
-    - task: check
-      image: ecr-harden-concourse-task-repo
-      file: scan-source/ci/ecr-cve-check.yml
-      params:
-        IMAGE: "((oracle-client-repo)):((.:tag))"
-        IMAGENAME: "oracle-client:((.:tag))"
-      on_failure:
-        put: slack
-        params:
-          text:  |
-            :x: FAILED oracle-client CVE check
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
-          username: ((username))
-          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
-      on_success:
-        put: slack
-        params:
-          text_file: message/alert.txt
-          text: |
-            :white_check_mark: $TEXT_FILE_CONTENT
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-          channel: '#cg-platform-news'
-          username: ((username))
-          icon_url: https://avatars1.githubusercontent.com/u/7809479?v=3&s=40
 
 - name: scan-ecr-sql-clients
   plan:
@@ -917,12 +801,6 @@ resources:
     branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: oracle-client-docker-repo
-  type: registry-image
-  source:
-    repository: 18fgsa/oracle-client
-    semver_constraint: ">= 1.0.0"
-
 - name: sql-clients-docker-repo
   type: registry-image
   source:
@@ -938,15 +816,6 @@ resources:
   type: time
   source:
     days: [Tuesday]
-
-- name: ecr-oracle-client
-  type: registry-image
-  source:
-    aws_access_key_id: ((aws-key))
-    aws_secret_access_key: ((aws-secret))
-    repository: oracle-client
-    aws_region: us-gov-west-1
-    semver_constraint: ">= 1.0.0"
 
 - name: ecr-sql-clients
   type: registry-image
@@ -992,13 +861,6 @@ resources:
     repository: harden-s3-resource-simple
     aws_region: us-gov-west-1
     semver_constraint: ">= 1.0.0"
-
-- name: image-tags-oracle-client
-  type: s3-iam
-  source:
-    bucket: ((tf-state-bucket))
-    versioned_file: ecr/tags-oracle-client.json
-    region_name: us-gov-west-1
 
 - name: image-tags-sql-clients
   type: s3-iam
@@ -1112,17 +974,14 @@ groups:
   - conmon-hardened-concourse-task-image
   - conmon-hardened-s3-resource-simple-image
   - conmon-18fgsa-sql-clients-image
-  - scan-oracle-client-docker-image
   - scan-sql-clients-docker-image
   - terraform-plan-ecr
   - terraform-apply-ecr
-  - list-tags-oracle-client
   - list-tags-sql-clients
   - list-tags-hardened-concourse-task
   - list-tags-hardened-s3-resource-simple
   - list-tags-hardened-concourse-task-staging
   - list-tags-hardened-s3-resource-simple-staging
-  - scan-ecr-oracle-client
   - scan-ecr-sql-clients
   - scan-hardened-concourse-task-staging-image
   - scan-hardened-s3-resource-simple-staging-image
@@ -1134,11 +993,9 @@ groups:
   - upload-hardened-s3-resource-simple-prod-image
 - name: docker-scan
   jobs:
-  - scan-oracle-client-docker-image
   - scan-sql-clients-docker-image
 - name: tags
   jobs:
-  - list-tags-oracle-client
   - list-tags-sql-clients
   - list-tags-hardened-concourse-task
   - list-tags-hardened-s3-resource-simple
@@ -1146,7 +1003,6 @@ groups:
   - list-tags-hardened-s3-resource-simple-staging
 - name: ecr-scan
   jobs:
-  - scan-ecr-oracle-client
   - scan-ecr-sql-clients
 - name: conmon-scan
   jobs:
