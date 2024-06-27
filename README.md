@@ -1,3 +1,5 @@
+## Archiving. Containers are now managed here: **https://github.com/cloud-gov/common-pipelines**
+
 # [Container Scanning]
 
 ## Why this project
